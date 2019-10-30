@@ -1,0 +1,53 @@
+?tacl routine
+#frame
+
+== Installs the Lightwave Service definitions.
+[#push
+isv
+svcname
+]
+
+#set isv [#param lws-isv]
+#set svcname acme-card-service
+
+#output
+#output Installing the ACME Card LightWave service
+#output 
+
+run [isv].lwscom import dictionary * !, file acmedict
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output Dicionary installation failed.
+  #return
+]
+
+run [isv].lwscom import api * !, file acmeapi
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output API installation failed.
+  #return
+]
+
+run [isv].lwscom import service [svcname] !, file acmesvc
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output Service installation failed.
+  #return
+]
+
+run [isv].lwscom alter service [svcname], acp allow-anonymous-access
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output Access Control Policy could not be configured.
+  #return
+]
+
+run [isv].lwscom alter service [svcname], enabled
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output The service could not be enabled.
+  #return
+]
+
+#output Completed.
+#output 
+run [isv].lwscom info service [svcname], detail
+#output 
+#output 
+
+#unframe

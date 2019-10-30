@@ -1,0 +1,1288 @@
+{
+  "name": "com.nuwavetech.demo.acme-card-api",
+  "description": "ACME Card Demo API", 
+  "id": "03ed04589049431d7b8001010000012ef1",
+  "modificationTime": 1571944028,
+  "isBrief": false,
+  "isNative": false,
+  "operations": [
+    {
+      "path": "/acme/account",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 60,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "ACCT-SERVER"
+            },
+            "transactionControl": true
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "accountDetail",
+                "source": {
+                  "type": "body",
+                  "value": "accountDetail"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "CreateAccountRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "*",
+                    "type": "body"
+                  },
+                  "source": "account"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "CreateAccountRp"
+              },
+              "httpStatus": 201,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "transactionControl": "abort",
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "transactionControl": "abort",
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "POST",
+          "description": "Create account"
+        }
+      ]
+    },
+    {
+      "path": "/acme/account/{account-number}",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "ACCT-SERVER"
+            },
+            "transactionControl": true
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "accountNumber",
+                "source": {
+                  "type": "path",
+                  "value": "{account-number}"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "DeleteAccountRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "DeleteAccountRp"
+              },
+              "httpStatus": 204,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "errorDetail",
+                  "target": {
+                    "type": "body",
+                    "value": "errorDetail"
+                  }
+                }
+              ],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "transactionControl": "abort"
+            },
+            {
+              "mappings": [],
+              "replyCode": "1",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "DeleteAccountRp"
+              },
+              "httpStatus": 404,
+              "transactionControl": "abort"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "errorDetail",
+                  "target": {
+                    "type": "body",
+                    "value": "errorDetail"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "transactionControl": "abort"
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "DELETE",
+          "description": "Delete account"
+        },
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "ACCT-SERVER"
+            }
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "accountNumber",
+                "source": {
+                  "type": "path",
+                  "value": "{account-number}"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "GetAccountRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "*",
+                    "type": "body"
+                  },
+                  "source": "account"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "GetAccountRp"
+              },
+              "httpStatus": 200,
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            },
+            {
+              "mappings": [],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            },
+            {
+              "mappings": [],
+              "replyCode": "1",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "GetAccountRp"
+              },
+              "httpStatus": 404,
+              "cloakingPaths": []
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "GET",
+          "description": "Get account"
+        },
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "ACCT-SERVER"
+            },
+            "transactionControl": true
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "accountNumber",
+                "source": {
+                  "type": "path",
+                  "value": "{account-number}"
+                }
+              },
+              {
+                "target": "accountDetail",
+                "source": {
+                  "type": "body",
+                  "value": "accountDetail"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "UpdateAccountRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "*",
+                    "type": "body"
+                  },
+                  "source": "account"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "UpdateAccountRp"
+              },
+              "httpStatus": 200,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "transactionControl": "abort",
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            },
+            {
+              "mappings": [],
+              "replyCode": "1",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "UpdateAccountRp"
+              },
+              "httpStatus": 404,
+              "transactionControl": "abort"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "transactionControl": "abort",
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "PUT",
+          "description": "Update account"
+        }
+      ]
+    },
+    {
+      "path": "/acme/accounts",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "ACCT-SERVER"
+            }
+          },
+          "request": {
+            "mappings": [],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "GetAccountsRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "accounts",
+                    "type": "body"
+                  },
+                  "source": "account"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "GetAccountsRp"
+              },
+              "httpStatus": 200
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "GET",
+          "description": "Get accounts"
+        }
+      ]
+    },
+    {
+      "path": "/acme/card",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 60,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "CARD-SERVER"
+            },
+            "transactionControl": true
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "cardDetail",
+                "source": {
+                  "type": "body",
+                  "value": "cardDetail"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "CreateCardRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "*",
+                    "type": "body"
+                  },
+                  "source": "card"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "CreateCardRp"
+              },
+              "httpStatus": 201,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "transactionControl": "abort",
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "transactionControl": "abort",
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "POST",
+          "description": "Create card"
+        }
+      ]
+    },
+    {
+      "path": "/acme/card/{card-number}",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "CARD-SERVER"
+            },
+            "transactionControl": true
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "cardNumber",
+                "source": {
+                  "type": "path",
+                  "value": "{card-number}"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "DeleteCardRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "DeleteCardRp"
+              },
+              "httpStatus": 204,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "errorDetail",
+                  "target": {
+                    "type": "body",
+                    "value": "errorDetail"
+                  }
+                }
+              ],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "transactionControl": "abort"
+            },
+            {
+              "mappings": [],
+              "replyCode": "1",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "DeleteCardRp"
+              },
+              "httpStatus": 404,
+              "transactionControl": "abort"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "errorDetail",
+                  "target": {
+                    "type": "body",
+                    "value": "errorDetail"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "transactionControl": "abort"
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "DELETE",
+          "description": "Delete card"
+        },
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "CARD-SERVER"
+            }
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "cardNumber",
+                "source": {
+                  "type": "path",
+                  "value": "{card-number}"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "GetCardRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "*",
+                    "type": "body"
+                  },
+                  "source": "card"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "GetCardRp"
+              },
+              "httpStatus": 200,
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            },
+            {
+              "mappings": [],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            },
+            {
+              "mappings": [],
+              "replyCode": "1",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "GetCardRp"
+              },
+              "httpStatus": 404,
+              "cloakingPaths": []
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "GET",
+          "description": "Get card"
+        },
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "CARD-SERVER"
+            },
+            "transactionControl": true
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "cardNumber",
+                "source": {
+                  "type": "path",
+                  "value": "{card-number}"
+                }
+              },
+              {
+                "target": "cardDetail",
+                "source": {
+                  "type": "body",
+                  "value": "cardDetail"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "UpdateCardRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "*",
+                    "type": "body"
+                  },
+                  "source": "card"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "UpdateCardRp"
+              },
+              "httpStatus": 200,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "transactionControl": "abort",
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            },
+            {
+              "mappings": [],
+              "replyCode": "1",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "UpdateCardRp"
+              },
+              "httpStatus": 404,
+              "transactionControl": "abort"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "transactionControl": "abort",
+              "cloakingPaths": [
+                "rpCode"
+              ]
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "PUT",
+          "description": "Update card"
+        }
+      ]
+    },
+    {
+      "path": "/acme/cards",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "CARD-SERVER"
+            }
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "accountNumber",
+                "source": {
+                  "type": "query",
+                  "value": "account-number"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "GetCardsRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "cards",
+                    "type": "body"
+                  },
+                  "source": "card"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "GetCardsRp"
+              },
+              "httpStatus": 200
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "GET",
+          "description": "Get cards"
+        }
+      ]
+    },
+    {
+      "path": "/acme/payment",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "PAY-SERVER"
+            },
+            "transactionControl": true
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "paymentDetail",
+                "source": {
+                  "type": "body",
+                  "value": "*"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "CreatePaymentRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "*",
+                    "type": "body"
+                  },
+                  "source": "transaction"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "CreatePaymentRp"
+              },
+              "httpStatus": 201,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "transaction",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "CreatePaymentRp"
+              },
+              "httpStatus": 400,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "errorDetail",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "transactionControl": "abort"
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "POST",
+          "description": "Create a payment"
+        }
+      ]
+    },
+    {
+      "path": "/acme/payment/{transaction-id}/void",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "PAY-SERVER"
+            },
+            "dialogControl": false,
+            "transactionControl": true
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "transactionId",
+                "source": {
+                  "type": "path",
+                  "value": "{transaction-id}"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "VoidPaymentRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "transactionId",
+                    "type": "body"
+                  },
+                  "source": "transactionId"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "VoidPaymentRp"
+              },
+              "httpStatus": 200,
+              "transactionControl": "commit"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "errorDetail",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "400",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 400,
+              "transactionControl": "abort"
+            },
+            {
+              "mappings": [
+                {
+                  "source": "errorDetail",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "500",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 500,
+              "transactionControl": "abort"
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "POST",
+          "description": "Void a payment transaction"
+        }
+      ]
+    },
+    {
+      "path": "/acme/transaction/{transaction-id}",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "PAY-SERVER"
+            }
+          },
+          "request": {
+            "mappings": [
+              {
+                "target": "transactionId",
+                "source": {
+                  "type": "path",
+                  "value": "{transaction-id}"
+                }
+              }
+            ],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "GetTransactionRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "*",
+                    "type": "body"
+                  },
+                  "source": "transaction"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "GetTransactionRp"
+              },
+              "httpStatus": 200
+            },
+            {
+              "mappings": [
+                {
+                  "source": "*",
+                  "target": {
+                    "type": "body",
+                    "value": "*"
+                  }
+                }
+              ],
+              "replyCode": "1",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "ErrorRp"
+              },
+              "httpStatus": 404
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "GET",
+          "description": "Get a transaction"
+        }
+      ]
+    },
+    {
+      "path": "/acme/transactions",
+      "methods": [
+        {
+          "api": {
+            "type": "serverclass",
+            "stringPadding": "zeros",
+            "transactionTimeout": 0,
+            "processName": {
+              "type": "constant",
+              "value": "=ACME-PATHMON"
+            },
+            "serverclass": {
+              "type": "constant",
+              "value": "PAY-SERVER"
+            }
+          },
+          "request": {
+            "mappings": [],
+            "messageType": {
+              "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+              "definition": "GetTransactionsRq"
+            }
+          },
+          "responses": [
+            {
+              "mappings": [
+                {
+                  "target": {
+                    "value": "transactions",
+                    "type": "body"
+                  },
+                  "source": "transaction"
+                }
+              ],
+              "replyCode": "0",
+              "messageType": {
+                "dictionary": "07a9d79eae494a1d7b8001010000012ef1",
+                "definition": "GetTransactionsRp"
+              },
+              "httpStatus": 200
+            }
+          ],
+          "cacheControl": {
+            "enabled": false,
+            "maxAge": 60
+          },
+          "verb": "GET",
+          "description": "Get transactions"
+        }
+      ]
+    }
+  ]
+}

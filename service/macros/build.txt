@@ -1,0 +1,120 @@
+?tacl routine
+#frame
+
+== Creates the DDL dictionary and C header files.
+
+#output
+#output Building the DDL Dictionary ...
+
+#set #inlineprefix +
+
+sink [#purge ddlout]
+
+ddl2 / inline, out ddlout /
+
++ ?dict !
++ ?c snsh !
++ ?cobol snscopy !
++ ?source snsddl ( LIGHTWAVE-DEF, API-DEF )
++ ?noc
++ ?nocobol
+
++ ?dict !
++ ?c acmeh !
++ ?cobol acmecpy !
++ ?source acmeddl   
++ ?noc
++ ?nocobol
+
+#inlineeof
+
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output Dicionary build completed with warnings or errors.
+  #return
+]
+
+== Build the program files.
+
+#output Building the Accounts server ....
+
+sink [#purge acctl]
+sink [#purge acctserv]
+
+ccomp / in acctc, out acctl / acctserv ; &
+  runnable, symbols, inspect, extensions, &
+  ssv0 "[#defaults/current/]", ssv1 "$system.system", &
+  ssv2 "$system.zsysdefs"
+
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output Compilation of ACCTC completed with warnings or errors.
+  #return
+]
+
+#output Building the Cards server ....
+
+sink [#purge cardl]
+sink [#purge cardserv]
+
+ccomp / in cardc, out cardl / cardserv ; &
+  runnable, symbols, inspect, extensions, &
+  ssv0 "[#defaults/current/]", ssv1 "$system.system", &
+  ssv2 "$system.zsysdefs"
+
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output Compilation of CARDC completed with warnings or errors.
+  #return
+]
+
+#output Building the Payments server ....
+
+sink [#purge payl]
+sink [#purge payserv]
+
+ccomp / in payc, out payl / payserv ; &
+  runnable, symbols, inspect, extensions, &
+  ssv0 "[#defaults/current/]", ssv1 "$system.system", &
+  ssv2 "$system.zsysdefs"
+
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output Compilation of PAYC completed with warnings or errors.
+  #return
+]
+
+#output Creating database files ....
+
+sink [#purge fupout]
+
+[#if [#fileinfo / existence / acctfile ] = 0 |then|
+
+  fup / in acctfup, out fupout / 
+
+  [#if [ :_completion:completioncode ] <> 0 |then|
+    #output Creation of database file ACCTFILE completed with warnings or errors.
+    #return
+  ]
+]
+
+[#if [#fileinfo / existence / cardfile ] = 0 |then|
+
+  fup / in cardfup, out fupout / 
+
+  [#if [ :_completion:completioncode ] <> 0 |then|
+    #output Creation of database file CARDFILE completed with warnings or errors.
+    #return
+  ]
+]
+
+[#if [#fileinfo / existence / tranfile ] = 0 |then|
+
+  fup / in tranfup, out fupout / 
+
+  [#if [ :_completion:completioncode ] <> 0 |then|
+    #output Creation of database file TRANFILE completed with warnings or errors.
+    #return
+  ]
+]
+
+#output Build completed successfully.
+#output 
+
+#unframe

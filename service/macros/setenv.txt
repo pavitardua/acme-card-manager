@@ -1,0 +1,15 @@
+?tacl macro
+
+== Set runtime environment. Customize this for your environment.
+ 
+#set #param pathmon-name        $ACME
+#set #param lws-isv             [#defaults/current/]
+#set #param enable-sms          0
+#set #param lwc-isv             [#defaults/current/]
+#set #param sns-base-url        https://sns.us-east-1.amazonaws.com
+
+delete define =acme?pathmon
+add define =acme-pathmon, class map, file [#param pathmon-name]
+
+
+ 

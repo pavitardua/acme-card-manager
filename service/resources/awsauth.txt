@@ -1,0 +1,8 @@
+#
+# Customize with your AccessKeyId, SecretAccessKey, and Region.
+#
+[auth]
+Method=aws-signature-v4
+AccessKeyId=AKIA************327U
+SecretAccessKey=Oj0B********************************cJ5T
+Region=us-east-1 

@@ -1,0 +1,8 @@
+?tacl routine
+#frame
+
+#output Stopping pathmon [#param pathmon-name] ...
+
+pathcom [#param pathmon-name] ; shutdown2
+
+#unframe

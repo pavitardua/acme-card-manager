@@ -1,0 +1,15 @@
+# Process log configuration.
+# For more information, see: https://docs.nuwavetech.com/display/LWCLIENT/Using+Configuration+Files
+#
+# Process log configuration.
+[log]
+file=zzlog
+level=info   # log at info level.
+format=text
+
+# Diagnostic log configuration.
+[diag-log]
+enabled=1
+subvol=*
+replyCodeFilter=1,2
+httpStatusFilter=400:599    

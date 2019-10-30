@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>ACME Card Manager - Simulation</title>
+    <!-- Bootstrap core and plugins CSS -->
+    <link rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous" />
+    <link rel="stylesheet"
+      href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css"
+      href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <!-- Custom styles  -->
+    <link href="app.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <!-- start of nav menu -->
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="">ACME Card
+        Manager</a>
+    </nav>
+    <div id="sidebar" class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <h6
+              class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Account Management</span>
+            </h6>
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a id="accounts-link" class="nav-link" href="#/accounts">
+                  <span data-feather="users"></span>Accounts</a>
+              </li>
+              <li class="nav-item">
+                <a id="cards-link" class="nav-link" href="#/cards">
+                  <span data-feather="credit-card"></span>Cards</a>
+              </li>
+              <h6
+                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>Payments</span>
+              </h6>
+              <li class="nav-item">
+                <a id="payment-link" class="nav-link" href="#/payment">
+                  <span data-feather="dollar-sign"></span>Terminal</a>
+              </li>
+              <li class="nav-item">
+                <a id="transactions-link" class="nav-link"
+                  href="#/transactions">
+                  <span data-feather="users"></span>Transactions</a>
+              </li>
+            </ul>
+            <h6
+              class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Simulation</span>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a id="requestlog-link" class="nav-link" href="./#/requestlog">
+                  <span data-feather="file-text"></span>API Request Log</a>
+              </li>
+              <li class="nav-item">
+                <a id="settings-link" class="nav-link" href="#/settings">
+                  <span data-feather="settings"></span>Settings</a>
+              </li>
+              <li class="nav-item">
+                <a id="about-link" class="nav-link" href="#/about">
+                  <span data-feather="info"></span>About</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <!-- end of nav menu -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+          <!-- start of accounts view -->
+          <div class="view" id="accounts-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h4">Accounts</span>
+            </div>
+            <div class="table-responsive">
+              <table id="accounts-table" class="table border-bottom">
+                <caption>Accounts Table</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Account #</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">City</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Postal Code</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <div class="mt-4 mr-1" role="group">
+                <button type="button" id="new-account-button"
+                  class="btn xbtn-sm btn-outline-primary">New Account</button>
+              </div>
+            </div>
+            <table class="template">
+              <tr id="account-table-row-template">
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+              </tr>
+            </table>
+          </div>
+          <!-- end of accounts view -->
+          <!-- start of scccount view -->
+          <div class="view" id="account-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h4" id="header">Account</span>
+            </div>
+            <div class="pl-1">
+              <form id="account-form" class="needs-validation" xnovalidate>
+                <input type="hidden" id="accountNumber">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="firstName">First Name</label>
+                    <input type="text" class="form-control" id="firstName"
+                      maxLength="32" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" class="form-control" id="lastName"
+                      maxLength="32" required>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="address1">Address</label>
+                  <input type="text" class="form-control" id="address1"
+                    maxLength="80" required>
+                </div>
+                <div class="mb-3">
+                  <input type="text" class="form-control" id="address2"
+                    maxLength="80">
+                </div>
+                <div class="row">
+                  <div class="col-md-5 mb-3">
+                    <label for="city">City</label>
+                    <input type="text" class="form-control" id="city"
+                      maxLength="32" required>
+                  </div>
+                  <div class="col-md-2 mb-3">
+                    <label for="state">State</label>
+                    <input type="text" class="form-control" id="state"
+                      maxLength="32" required>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label for="postalCode">Zip</label>
+                    <input type="text" class="form-control" maxLength="16"
+                      id="postalCode" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-5 mb-3">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email"
+                      maxLength="32" required>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone"
+                      maxLength="20" required>
+                  </div>
+                </div>
+                <div class="mt-2 mb-2" role="group">
+                  <button type="button"
+                    class="btn xbtn-sm btn-outline-primary back-button">Back</button>
+                  <button type="submit"
+                    class="btn xbtn-sm btn-outline-secondary"
+                    id="save-account-button">Save</button>
+                  <button type="button"
+                    class="btn xbtn-sm btn-outline-secondary"
+                    id="delete-account-button" data-toggle="modal"
+                    data-target="#delete-account-modal">Delete</button>
+                </div>
+              </form>
+              <div class="table-responsive">
+                <table id="account-cards" class="table border-bottom mt-4">
+                  <thead>
+                    <tr>
+                      <th scope="col">Card #</th>
+                      <th scope="col">Name on Card</th>
+                      <th scope="col" class="text-right">Balance</th>
+                      <th scope="col" class="text-right">Spending Limit</th>
+                      <th scope="col" class="text-right">Alert Limit</th>
+                      <th scope="col">Is Card Locked</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+                <table class="template">
+                  <tr id="account-cards-row-template">
+                    <td>card #</td>
+                    <td>name on card</td>
+                    <td class="text-right">balance</td>
+                    <td class="text-right">limit</td>
+                    <td class="text-right">alert/td>
+                    <td>locked</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- end of account view -->
+          <!-- start of cards view -->
+          <div class="view" id="cards-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h4">Cards</span>
+            </div>
+            <div class="table-responsive">
+              <table id="cards-table" class="table  border-bottom">
+                <caption>Accounts Table</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Card #</th>
+                    <th scope="col">Name on Card</th>
+                    <th scope="col">Account #</th>
+                    <th scope="col" class="text-right">Balance</th>
+                    <th scope="col" class="text-right">Spending Limit</th>
+                    <th scope="col" class="text-right">Alert Limit</th>
+                    <th scope="col">Is Card Locked</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <div class="mt-4" role="group">
+                <button type="button" id="new-card-button"
+                  class="btn xbtn-sm btn-outline-primary">New Card</button>
+              </div>
+            </div>
+            <table class="template">
+              <tr id="card-table-row-template">
+                <td>card #</td>
+                <td>name on card</td>
+                <td>account #/td>
+                <td class="text-right">balance</td>
+                <td class="text-right">limit</td>
+                <td class="text-right">alert/td>
+                <td>locked</td>
+              </tr>
+            </table>
+          </div>
+          <!-- end of cards view -->
+          <!-- start of card view -->
+          <div class="view" id="card-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h4" id="header">Account</span>
+            </div>
+            <div class="pl-1">
+              <form id="card-form" class="needs-validation" xnovalidate>
+                <input type="hidden" id="cardNumber">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="nameOnCard">Name on Card</label>
+                    <input type="text" class="form-control" id="nameOnCard"
+                      maxLength="64" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="accountNumber">Account #</label>
+                    <select class="form-control" id="accountNumber">
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2 mb-3">
+                    <label for="expMonth">Expiration</label>
+                    <select class="form-control" id="expMonth">
+                      <option value="">- Month -</option>
+                      <option value="01">Jan</option>
+                      <option value="02">Feb</option>
+                      <option value="03">Mar</option>
+                      <option value="04">Apr</option>
+                      <option value="05">May</option>
+                      <option value="06">Jun</option>
+                      <option value="07">Jul</option>
+                      <option value="08">Aug</option>
+                      <option value="09">Sep</option>
+                      <option value="10">Oct</option>
+                      <option value="11">Nov</option>
+                      <option value="12">Dec</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <label for="expYear">&nbsp;</label>
+                    <select class="form-control" id="expYear">
+                      <option value="">- Year -</option>
+                      <option value="2019">2019</option>
+                      <option value="2020">2020</option>
+                      <option value="2021">2021</option>
+                      <option value="2022">2022</option>
+                      <option value="2023">2023</option>
+                      <option value="2024">2024</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2 mb-3">
+                    <label for="securityCode">Security Code</label>
+                    <input type="text" class="form-control" id="securityCode"
+                      maxlength="4" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2 mb-3">
+                    <label for="spendingLimit">Spending Limit</label>
+                    <input type="text" class="form-control" id="spendingLimit"
+                      maxLength="18" required>
+                  </div>
+                  <div class="col-md-2 mb-3">
+                    <label for="alertLimit">Alert Limit</label>
+                    <input type="text" class="form-control" id="alertLimit"
+                      maxLength="18" required>
+                  </div>
+                  <div class="col-md-2 mb-3" id="form-balance">
+                    <label for="balance">Balance</label>
+                    <input type="text" class="form-control-plaintext"
+                      id="balance" readonly>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="ml-3 form-check">
+                    <input type="checkbox" class="form-check-input"
+                      id="isLocked">
+                    <label class="form-check-label" for="isLocked">Is Card
+                      Locked</label>
+                  </div>
+                </div>
+                <div class="mt-4 mb-2" role="group">
+                  <button type="button"
+                    class="btn xbtn-sm btn-outline-primary back-button">Back</button>
+                  <button type="submit"
+                    class="btn xbtn-sm btn-outline-secondary"
+                    id="save-card-button">Save</button>
+                  <button type="button"
+                    class="btn xbtn-sm btn-outline-secondary"
+                    id="delete-account-button" data-toggle="modal"
+                    data-target="#delete-card-modal">Delete</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- end of card view -->
+          <!-- start of payment view -->
+          <div class="view" id="payment-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h3">Payments Terminal</span>
+              <div class="btn-toolbar mb-2 mb-md-0">
+              </div>
+            </div>
+            <div class="pl-1">
+              <form id="payment-form">
+                <div class="row">
+                  <div class="col-md-2 mb-3">
+                    <label for="amount">Amount</label>
+                    <input type="text" class="form-control" id="amount"
+                      maxLength="18" required>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="merchantName">Merchant Name</label>
+                    <input type="text" class="form-control" id="merchantName"
+                      maxLength="20" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3 ui-widget">
+                    <label for="cardNumber">Credit card number</label>
+                    <input type="text" class="form-control" id="cardNumber"
+                      maxLength="16" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="nameOnCard">Name on card</label>
+                    <input type="text" class="form-control" id="nameOnCard"
+                      maxLength="64" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2 mb-3">
+                    <label for="expMonth">Expiration</label>
+                    <select class="form-control" id="expMonth">
+                      <option value="">- Month -</option>
+                      <option value="01">Jan</option>
+                      <option value="02">Feb</option>
+                      <option value="03">Mar</option>
+                      <option value="04">Apr</option>
+                      <option value="05">May</option>
+                      <option value="06">Jun</option>
+                      <option value="07">Jul</option>
+                      <option value="08">Aug</option>
+                      <option value="09">Sep</option>
+                      <option value="10">Oct</option>
+                      <option value="11">Nov</option>
+                      <option value="12">Dec</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <label for="expYear">&nbsp;</label>
+                    <select class="form-control" id="expYear">
+                      <option value="">- Year -</option>
+                      <option value="2019">2019</option>
+                      <option value="2020">2020</option>
+                      <option value="2021">2021</option>
+                      <option value="2022">2022</option>
+                      <option value="2023">2023</option>
+                      <option value="2024">2024</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2 mb-3">
+                    <label for="securityCode">Security Code</label>
+                    <input type="text" class="form-control" id="securityCode"
+                      maxLength="4" required>
+                  </div>
+                </div>
+                <div class="mt-4 mb-2" role="group">
+                  <button type="button"
+                    class="btn xbtn-sm btn-outline-primary back-button">Back</button>
+                  <button type="button"
+                    class="btn xbtn-sm btn-outline-secondary"
+                    id="clear-payment-button">Clear</button>
+                  <button type="submit"
+                    class="btn xbtn-sm btn-outline-secondary"
+                    id="submit-payment-button">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- end of payment view -->
+          <!-- start of transaction view -->
+          <div class="view" id="transaction-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h3">Payment Transaction</span>
+              <div class="btn-toolbar mb-2 mb-md-0">
+              </div>
+            </div>
+            <div>
+              <table class="table-responsive" id="transaction-table">
+                <tbody>
+                  <tr>
+                    <th scope="row">Transaction ID</th>
+                    <td id="transactionId"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Related Transaction ID</th>
+                    <td id="relatedTransactionId"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Date & Time</th>
+                    <td id="date"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Type</th>
+                    <td id="type"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Response Code</th>
+                    <td id="responseCode"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Amount</th>
+                    <td id="amount"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Merchant Name</th>
+                    <td id="merchantName"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Card Number</th>
+                    <td id="cardNumber"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Expiration</th>
+                    <td id="exp"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Security Code</th>
+                    <td id="securityCode"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="mt-4 mb-2" role="group">
+              <button type="button"
+                class="btn xbtn-sm btn-outline-primary back-button">Back</button>
+              <button type="button" class="btn xbtn-sm btn-outline-secondary"
+                id="void-payment-button" data-toggle="modal"
+                data-target="#void-payment-modal">Void</button>
+            </div>
+          </div>
+          <!-- end of transaction -->
+          <!-- start of transactions -->
+          <div class="view" id="transactions-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h3">Payment Transactions</span>
+              <div class="btn-toolbar mb-2 mb-md-0">
+              </div>
+            </div>
+            <div id="transaction-table-container">
+              <table id="transactions-table-template" class="table template">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Transaction ID</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Merchant</th>
+                    <th scope="col">Card #</th>
+                    <th scope="col">Response</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <table class="template">
+                <tr id="transactions-table-row-template">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <div id="transactions-log-empty-template" class="mt-4 template">
+                  There are no transaction in the payments log.</div>
+              </table>
+            </div>
+          </div>
+          <!-- end of transactions -->
+          <!-- start of api request log -->
+          <div class="view" id="requestlog-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2">
+              <span class="h4">API Request Log</span>
+            </div>
+            <div class="mt-1 mb-4 ml-1">
+              <button id="clear-request-log" type="button"
+                class="btn xbtn-sm btn-outline-primary">Clear Log</button>
+            </div>
+            <div id="request-log">
+            </div>
+            <div id="request-log-empty-template" class="mt-4 template">There are
+              no entries in the request log.</div>
+            <div id="request-log-item-template" class="template">
+              <div class="card mb-1">
+                <div class="card-header" id="heading-i">
+                  <h5 class="mb-0"><button
+                      class="btn btn-block btn-sm text-left"
+                      data-toggle="collapse" data-target="#collapse-i"
+                      aria-expanded="false"
+                      aria-controls="collapse-i">title</button></h5>
+                </div>
+                <div id="collapse-i" class="collapse"
+                  aria-labelledby="heading-i" data-parent="#request-log">
+                  <div class="card-body">
+                    <pre>request</pre>
+                    <hr>
+                    <pre>response</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end of api request log -->
+          <!-- start of settings-->
+          <div class="view" id="settings-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h3">Settings</span>
+              <div class="btn-toolbar mb-2 mb-md-0">
+              </div>
+            </div>
+            <div class="pl-1">
+              <form id="settings-form">
+                <div class="row">
+                  <div class="col-md-8 mb-3">
+                    <label for="amount">LightWave Server Host Address</label>
+                    <input type="text" class="form-control" id="host"
+                      maxLength="256" required>
+                  </div>
+                </div>
+                <div class="mt-4 mb-2" role="group">
+                  <button type="button"
+                    class="btn xbtn-sm btn-outline-primary back-button">Back</button>
+                  <button type="submit"
+                    class="btn xbtn-sm btn-outline-secondary"
+                    id="submit-payment-button">Save</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- end of settings-->
+          <!-- start of about -->
+          <div class="view" id="about-view">
+            <div
+              class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <span class="h3">About ACME Card Manager</span>
+              <div class="btn-toolbar mb-2 mb-md-0">
+              </div>
+            </div>
+            <div>
+              <p> ACME Card Manager simulates how a traditional NonStop payment
+                application (such as BASE24 or Connex) might be REST-enabled
+                using LightWave Server. Typical account and card functions are
+                supported from the relevant menu items. Transactions can be
+                initiated from the <em>Terminal</em> view with the results
+                viewed on the <em>Transactions</em> view. A small range of
+                relevant response codes are simulated, and the result of the
+                transaction (success or failure) can be seen in real-time in the
+                <em>Terminal</em> view, and historically in the
+                <em>Transactions</em> view. </p>
+              <p> All of these services are provided as REST APIs by LightWave
+                Server working in conjunction with simple demo Pathway Servers
+                on the NonStop. The details of all data exchanged with the REST
+                services can be viewed in the <em>API Request Log</em> view -
+                this shows all requests sent to the NonStop, and all responses
+                returned.</p>
+              <p> When enabled, the application Pathway servers use LightWave
+                Client to send SMS notifications to simulated cardholders using
+                the <a href="https://aws.amazon.com/sns/">AWS Simple
+                  Notification Service</a> REST API. Notifications are sent for
+                sale and void transactions, and card lock status changes. </p>
+              <p> LightWave Server&trade; allows HPE NonStop users to expose
+                their existing Guardian or Pathway servers as industry-standard
+                REST services. </p>
+              <p>LightWave Client&trade; allows applications running on HPE
+                NonStop servers to securely access public or private REST APIs.
+              </p>
+              <p> For information on LightWave products, visit the <a
+                  href="https://docs.nuwavetech.com">NuWave Technologies
+                  Documentation Center</a>
+              </p>
+              <p><em>This application is a simulation. Card and account numbers
+                  are ficticious and no actual payment transactions occur.</em>
+              </p>
+            </div>
+          </div>
+          <!-- end of about -->
+          <!-- start of account delete modal -->
+          <div class="modal fade" id="delete-account-modal" tabindex="-1"
+            role="dialog" aria-labelledby="delete-account-modalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Confirm Account Deletion</h5>
+                  <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body"> Are you sure you want to delete this
+                  account? </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn xbtn-sm btn-outline-primary"
+                    data-dismiss="modal">Cancel</button>
+                  <button id="delete-account-confirmed" type="button"
+                    class="btn xbtn-sm btn-outline-secondary">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end of account delete modal -->
+          <!-- start of card delete modal -->
+          <div class="modal fade" id="delete-card-modal" tabindex="-1"
+            role="dialog" aria-labelledby="delete-card-modalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Confirm Card Deletion</h5>
+                  <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body"> Are you sure you want to delete this
+                  card? </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn xbtn-sm btn-outline-primary"
+                    data-dismiss="modal">Cancel</button>
+                  <button id="delete-card-confirmed" type="button"
+                    class="btn xbtn-sm btn-outline-secondary">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end of card delete modal -->
+          <!-- start of card delete modal -->
+          <div class="modal fade" id="void-payment-modal" tabindex="-1"
+            role="dialog" aria-labelledby="void-payment-modalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Void Payment Confirmation</h5>
+                  <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body"> Are you sure you want to void this
+                  payment?</div>
+                <div class="modal-footer">
+                  <button type="button" class="btn xbtn-sm btn-outline-primary"
+                    data-dismiss="modal">Cancel</button>
+                  <button id="void-payment-confirmed" type="button"
+                    class="btn xbtn-sm btn-outline-secondary">Void</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end of card delete modal -->
+          <!-- start of alert container -->
+          <div id="alert">
+          </div>
+          <!-- end of alert container -->
+        </main>
+      </div>
+    </div>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS, Data Feather icons, plugins, then app. -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+      integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+      src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <script src="app.js"></script>
+  </body>
+
+</html>

@@ -1,14 +1,52 @@
+# Check whitespace
 * whitespace=blank-at-eol,space-before-tab,tab-in-indent,tabwidth=2
 
-* text auto
-*.html text
-*.js text
-*.txt text
-*.md text
-*.json text
-*.c text
-*.h text
+# Set default behaviour ... always use LF.
+* text eol=lf
 
-*.jpg binary
+*.cs diff=csharp
+*.sln merge=union
+*.csproj merge=union
+*.vbproj merge=union
+*.fsproj merge=union
+*.dbproj merge=union
+
+*.doc diff=astextplain
+*.DOC diff=astextplain
+*.docx diff=astextplain
+*.DOCX diff=astextplain
+*.dot  diff=astextplain
+*.DOT  diff=astextplain
+*.pdf  diff=astextplain
+*.PDF diff=astextplain
+*.rtf diff=astextplain
+*.RTF diff=astextplain
+
+
+# Declare files that will always have CRLF line endings on checkout.
+*.sln text eol=crlf
+*.hmskin text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.gif binary
 *.png binary
+*.jpg binary
 *.pak binary
+*.zip binary
+*.keystore binary
+*.jar binary
+*.ico binary
+*.hmxp binary
+*.lng binary
+*.tar binary
+*.gz binary
+*.mnl binary
+*.hmskin binary
+*.otf binary
+*.eot binary
+*.woff binary
+*.pfx binary
+*.bin binary
+
+
+

@@ -1,0 +1,5 @@
+?tacl macro 
+
+unpak datapak, ($*.*.*), listall, myid, audited, &
+map names $*.*.* to [ #defaults / current /].*
+

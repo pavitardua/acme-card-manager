@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<dictionary xmlns="http://schemas.nuwavetech.com/schemas/lightwave/dictionary-1.0.xsd" id="07a9d79eae494a1d7b8001010000012ef1" name="com.nuwavetech.demo.acme-card-dictionary" ddlOrigin="MXwgIHwxNTcyNDYyMDk2fFxDR05BQzIuJERBVDE4QS5BQ01FQ0FSRA==">
+  <types>
+    <type name="Account" size="360" ddlType="1" ddlName="ACCOUNT" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxBQ0NPVU5UfFxDR05BQzIuJERBVDE4QS5BQ01FQ0FSRA==">
+      <element name="accountNumber" type="string" offset="0" size="4"/>
+      <element name="accountDetail" type="AccountDetail" offset="4" size="356"/>
+    </type>
+    <type name="AccountDetail" size="356" ddlType="1" ddlName="ACCOUNT-DETAIL" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxBQ0NPVU5ULURFVEFJTHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="firstName" type="string" offset="0" size="32"/>
+      <element name="lastName" type="string" offset="32" size="32"/>
+      <element name="address1" type="string" offset="64" size="80"/>
+      <element name="address2" type="string" offset="144" size="80"/>
+      <element name="city" type="string" offset="224" size="32"/>
+      <element name="state" type="string" offset="256" size="32"/>
+      <element name="postalCode" type="string" offset="288" size="16"/>
+      <element name="emailAddress" type="string" offset="304" size="32"/>
+      <element name="phoneNumber" type="string" offset="336" size="20"/>
+    </type>
+    <type name="Card" size="108" ddlType="1" ddlName="CARD" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxDQVJEfFxDR05BQzIuJERBVDE4QS5BQ01FQ0FSRA==">
+      <element name="cardNumber" type="string" offset="0" size="16"/>
+      <element name="cardDetail" type="CardDetail" offset="16" size="92"/>
+    </type>
+    <type name="CardDetail" size="92" ddlType="1" ddlName="CARD-DETAIL" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxDQVJELURFVEFJTHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="accountNumber" type="string" offset="0" size="4"/>
+      <element name="nameOnCard" type="string" offset="4" size="64"/>
+      <element name="expMonth" type="string" offset="68" size="2"/>
+      <element name="expYear" type="string" offset="70" size="4"/>
+      <element name="securityCode" type="string" offset="74" size="4"/>
+      <!--@LightWaveAttribute(scale="2")-->
+      <element name="balance" type="int" offset="78" size="4" scale="2"/>
+      <!--@LightWaveAttribute(scale="2")-->
+      <element name="spendingLimit" type="int" offset="82" size="4" scale="2"/>
+      <!--@LightWaveAttribute(scale="2")-->
+      <element name="alertLimit" type="int" offset="86" size="4" scale="2"/>
+      <!--@LightWaveAttribute(type="boolean")-->
+      <element name="isLocked" type="boolean" offset="90" size="2"/>
+    </type>
+    <type name="CreateAccountRp" size="362" ddlType="1" ddlName="CREATE-ACCOUNT-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxDUkVBVEUtQUNDT1VOVC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="account" type="Account" offset="2" size="360"/>
+    </type>
+    <type name="CreateAccountRq" size="358" ddlType="1" ddlName="CREATE-ACCOUNT-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxDUkVBVEUtQUNDT1VOVC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="1"/>
+      <element name="accountDetail" type="AccountDetail" offset="2" size="356"/>
+    </type>
+    <type name="CreateCardRp" size="110" ddlType="1" ddlName="CREATE-CARD-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxDUkVBVEUtQ0FSRC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="card" type="Card" offset="2" size="108"/>
+    </type>
+    <type name="CreateCardRq" size="94" ddlType="1" ddlName="CREATE-CARD-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxDUkVBVEUtQ0FSRC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="1"/>
+      <element name="cardDetail" type="CardDetail" offset="2" size="92"/>
+    </type>
+    <type name="CreatePaymentRp" size="168" ddlType="1" ddlName="CREATE-PAYMENT-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxDUkVBVEUtUEFZTUVOVC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="transaction" type="Transaction" offset="2" size="166"/>
+    </type>
+    <type name="CreatePaymentRq" size="116" ddlType="1" ddlName="CREATE-PAYMENT-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxDUkVBVEUtUEFZTUVOVC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="1"/>
+      <element name="paymentDetail" type="PaymentDetail" offset="2" size="114"/>
+    </type>
+    <type name="DeleteAccountRp" size="2" ddlType="1" ddlName="DELETE-ACCOUNT-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxERUxFVEUtQUNDT1VOVC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+    </type>
+    <type name="DeleteAccountRq" size="6" ddlType="1" ddlName="DELETE-ACCOUNT-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxERUxFVEUtQUNDT1VOVC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="4"/>
+      <element name="accountNumber" type="string" offset="2" size="4"/>
+    </type>
+    <type name="DeleteCardRp" size="2" ddlType="1" ddlName="DELETE-CARD-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxERUxFVEUtQ0FSRC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+    </type>
+    <type name="DeleteCardRq" size="18" ddlType="1" ddlName="DELETE-CARD-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxERUxFVEUtQ0FSRC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="4"/>
+      <element name="cardNumber" type="string" offset="2" size="16"/>
+    </type>
+    <type name="ErrorDetail" size="1026" ddlType="1" ddlName="ERROR-DETAIL" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxFUlJPUi1ERVRBSUx8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="errorCode" type="short" offset="0" size="2"/>
+      <element name="errorMessage" type="string" offset="2" size="1024"/>
+    </type>
+    <type name="ErrorRp" size="1028" ddlType="1" ddlName="ERROR-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxFUlJPUi1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="errorDetail" type="ErrorDetail" offset="2" size="1026"/>
+    </type>
+    <type name="GetAccountRp" size="362" ddlType="1" ddlName="GET-ACCOUNT-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtQUNDT1VOVC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="account" type="Account" offset="2" size="360"/>
+    </type>
+    <type name="GetAccountRq" size="6" ddlType="1" ddlName="GET-ACCOUNT-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtQUNDT1VOVC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="2"/>
+      <element name="accountNumber" type="string" offset="2" size="4"/>
+    </type>
+    <type name="GetAccountsRp" size="18004" ddlType="1" ddlName="GET-ACCOUNTS-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtQUNDT1VOVFMtUlB8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="itemCount" type="short" offset="2" size="2"/>
+      <element name="account" type="Account" minOccurs="0" maxOccurs="50" offset="4" size="360" dependsOn="itemCount"/>
+    </type>
+    <type name="GetAccountsRq" size="4" ddlType="1" ddlName="GET-ACCOUNTS-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtQUNDT1VOVFMtUlF8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="rqCode" type="short" offset="0" size="2" value="5"/>
+      <element name="itemCount" type="short" offset="2" size="2"/>
+    </type>
+    <type name="GetCardRp" size="110" ddlType="1" ddlName="GET-CARD-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtQ0FSRC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="card" type="Card" offset="2" size="108"/>
+    </type>
+    <type name="GetCardRq" size="18" ddlType="1" ddlName="GET-CARD-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtQ0FSRC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="2"/>
+      <element name="cardNumber" type="string" offset="2" size="16"/>
+    </type>
+    <type name="GetCardsRp" size="5404" ddlType="1" ddlName="GET-CARDS-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtQ0FSRFMtUlB8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="itemCount" type="short" offset="2" size="2"/>
+      <element name="card" type="Card" minOccurs="0" maxOccurs="50" offset="4" size="108" dependsOn="itemCount"/>
+    </type>
+    <type name="GetCardsRq" size="8" ddlType="1" ddlName="GET-CARDS-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtQ0FSRFMtUlF8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="rqCode" type="short" offset="0" size="2" value="5"/>
+      <element name="accountNumber" type="string" offset="2" size="4"/>
+      <element name="itemCount" type="short" offset="6" size="2"/>
+    </type>
+    <type name="GetTransactionRp" size="168" ddlType="1" ddlName="GET-TRANSACTION-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtVFJBTlNBQ1RJT04tUlB8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="transaction" type="Transaction" offset="2" size="166"/>
+    </type>
+    <type name="GetTransactionRq" size="22" ddlType="1" ddlName="GET-TRANSACTION-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtVFJBTlNBQ1RJT04tUlF8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="rqCode" type="short" offset="0" size="2" value="3"/>
+      <element name="transactionId" type="string" offset="2" size="20"/>
+    </type>
+    <type name="GetTransactionsRp" size="8304" ddlType="1" ddlName="GET-TRANSACTIONS-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtVFJBTlNBQ1RJT05TLVJQfFxDR05BQzIuJERBVDE4QS5BQ01FQ0FSRA==">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="itemCount" type="short" offset="2" size="2"/>
+      <element name="transaction" type="Transaction" minOccurs="0" maxOccurs="50" offset="4" size="166" dependsOn="itemCount"/>
+    </type>
+    <type name="GetTransactionsRq" size="4" ddlType="1" ddlName="GET-TRANSACTIONS-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxHRVQtVFJBTlNBQ1RJT05TLVJRfFxDR05BQzIuJERBVDE4QS5BQ01FQ0FSRA==">
+      <element name="rqCode" type="short" offset="0" size="2" value="4"/>
+      <element name="itemCount" type="short" offset="2" size="2"/>
+    </type>
+    <type name="PaymentDetail" size="114" ddlType="1" ddlName="PAYMENT-DETAIL" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxQQVlNRU5ULURFVEFJTHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <!--@LightWaveAttribute(scale="2")-->
+      <element name="amount" type="int" offset="0" size="4" scale="2"/>
+      <element name="merchantName" type="string" offset="4" size="20"/>
+      <element name="cardNumber" type="string" offset="24" size="16"/>
+      <element name="nameOnCard" type="string" offset="40" size="64"/>
+      <element name="expMonth" type="string" offset="104" size="2"/>
+      <element name="expYear" type="string" offset="106" size="4"/>
+      <element name="securityCode" type="string" offset="110" size="4"/>
+    </type>
+    <type name="Transaction" size="166" ddlType="1" ddlName="TRANSACTION" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxUUkFOU0FDVElPTnxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="transactionId" type="string" offset="0" size="20"/>
+      <element name="relatedTransactionId" type="string" offset="20" size="20"/>
+      <element name="paymentResponseCode" type="string" offset="40" size="2"/>
+      <element name="transactionType" type="short" offset="42" size="2"/>
+      <!--@LightWaveAttribute(type="timestamp")-->
+      <element name="timestamp" type="timestamp" offset="44" size="8"/>
+      <element name="paymentDetail" type="PaymentDetail" offset="52" size="114"/>
+    </type>
+    <type name="UpdateAccountRp" size="362" ddlType="1" ddlName="UPDATE-ACCOUNT-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxVUERBVEUtQUNDT1VOVC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="account" type="Account" offset="2" size="360"/>
+    </type>
+    <type name="UpdateAccountRq" size="362" ddlType="1" ddlName="UPDATE-ACCOUNT-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxVUERBVEUtQUNDT1VOVC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="3"/>
+      <element name="accountNumber" type="string" offset="2" size="4"/>
+      <element name="accountDetail" type="AccountDetail" offset="6" size="356"/>
+    </type>
+    <type name="UpdateCardRp" size="110" ddlType="1" ddlName="UPDATE-CARD-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxVUERBVEUtQ0FSRC1SUHxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="card" type="Card" offset="2" size="108"/>
+    </type>
+    <type name="UpdateCardRq" size="110" ddlType="1" ddlName="UPDATE-CARD-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxVUERBVEUtQ0FSRC1SUXxcQ0dOQUMyLiREQVQxOEEuQUNNRUNBUkQ=">
+      <element name="rqCode" type="short" offset="0" size="2" value="3"/>
+      <element name="cardNumber" type="string" offset="2" size="16"/>
+      <element name="cardDetail" type="CardDetail" offset="18" size="92"/>
+    </type>
+    <type name="VoidPaymentRp" size="22" ddlType="1" ddlName="VOID-PAYMENT-RP" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxWT0lELVBBWU1FTlQtUlB8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="rpCode" type="short" offset="0" size="2"/>
+      <element name="transactionId" type="string" offset="2" size="20"/>
+    </type>
+    <type name="VoidPaymentRq" size="22" ddlType="1" ddlName="VOID-PAYMENT-RQ" ddlModified="2019-10-30T12:43" ddlOrigin="MXxJRHxWT0lELVBBWU1FTlQtUlF8XENHTkFDMi4kREFUMThBLkFDTUVDQVJE">
+      <element name="rqCode" type="short" offset="0" size="2" value="2"/>
+      <element name="transactionId" type="string" offset="2" size="20"/>
+    </type>
+  </types>
+</dictionary>

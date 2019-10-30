@@ -1,0 +1,12 @@
+?tacl macro
+
+== Clear params set by SETENV.
+
+clear param pathmon-name     
+clear param lws-isv          
+clear param lwc-isv          
+clear param enable-sms       
+clear param sns-base-url   
+
+
+

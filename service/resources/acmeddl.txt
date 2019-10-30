@@ -1,0 +1,382 @@
+!
+! ACME Card Demo DDL.
+!
+! Copyright (c) 2019 NuWave Technologies, Inc. All rights reserved.
+
+!
+! Common constants and definitions.
+!
+
+?COMMENTS
+?C00CALIGN
+
+CONSTANT SETKEY-APPROX                  VALUE 0.
+CONSTANT SETKEY-GENERIC                 VALUE 1.
+CONSTANT SETKEY-EXACT                   VALUE 2.
+
+DEF RQ-CODE                             TYPE BINARY 16.
+DEF RP-CODE                             TYPE BINARY 16.
+DEF ERROR-CODE                          TYPE BINARY 16.
+
+DEF ACCOUNT-NUMBER                      PIC X(4).    
+DEF CARD-NUMBER                         PIC X(16).
+DEF ITEM-COUNT                          TYPE BINARY 16.
+DEF TRANSACTION-ID                      PIC X(20).
+DEF TIMESTAMP                           TYPE BINARY 64.  
+DEF MERCHANT-NAME                       PIC X(20).
+
+CONSTANT RP-CODE-SUCCESS                VALUE 0.
+CONSTANT RP-CODE-NOT-FOUND              VALUE 1.
+CONSTANT RP-CODE-BAD-REQUEST            VALUE 400.
+CONSTANT RP-CODE-INTERNAL-ERROR         VALUE 500.
+
+CONSTANT TRANSACTION-TYPE-SALE          VALUE 1.
+CONSTANT TRANSACTION-TYPE-VOID          VALUE 2.
+DEF TRANSACTION-TYPE TYPE ENUM BEGIN.
+  89 TRANSACTION-TYPE-SALE              VALUE TRANSACTION-TYPE-SALE.
+  89 TRANSACTION-TYPE-VOID              VALUE TRANSACTION-TYPE-VOID. 
+END.
+
+!
+! Payment response codes.
+!
+DEF PAYMENT-RESPONSE-CODE               PIC X(2).
+CONSTANT RESPONSE-CODE-APPROVED         VALUE "00".
+CONSTANT RESPONSE-CODE-INV-CARD         VALUE "14".
+CONSTANT RESPONSE-CODE-INS-FUNDS        VALUE "51".
+CONSTANT RESPONSE-CODE-EXPIRED          VALUE "54".
+CONSTANT RESPONSE-CODE-INV-AMOUNT       VALUE "67".
+CONSTANT RESPONSE-CODE-INV-DATE         VALUE "80".
+CONSTANT RESPONSE-CODE-INV-CVV          VALUE "82".
+CONSTANT RESPONSE-CODE-RESTRICTED       VALUE "98".
+
+!
+! Error responses. HTTP status is 500.
+!
+CONSTANT ERROR-CODE-NO-TRANSACTION      VALUE 1.
+CONSTANT ERROR-CODE-IO-ERROR            VALUE 2.
+CONSTANT ERROR-CODE-NOT-FOUND           VALUE 3.
+
+DEF ERROR-DETAIL.
+  10 ERROR-CODE                         TYPE *.
+  10 ERROR-MESSAGE                      PIC X(1024).
+END.
+
+DEF ERROR-RP.
+  10 RP-CODE                            TYPE *.
+  10 ERROR-DETAIL                       TYPE *.
+END.
+
+!
+! Account constants and definitions.
+!
+CONSTANT RQ-CODE-CREATE-ACCOUNT         VALUE 1.
+CONSTANT RQ-CODE-GET-ACCOUNT            VALUE 2.
+CONSTANT RQ-CODE-UPDATE-ACCOUNT         VALUE 3.
+CONSTANT RQ-CODE-DELETE-ACCOUNT         VALUE 4.
+CONSTANT RQ-CODE-GET-ACCOUNTS           VALUE 5.
+CONSTANT RQ-CODE-ALERT-ACCOUNT          VALUE 6.
+
+DEF RQ-CODE-ENUM-ACCOUNT TYPE ENUM BEGIN.
+  89 RQ-CODE-CREATE-ACCOUNT             VALUE RQ-CODE-CREATE-ACCOUNT.
+  89 RQ-CODE-GET-ACCOUNT                VALUE RQ-CODE-GET-ACCOUNT.
+  89 RQ-CODE-UPDATE-ACCOUNT             VALUE RQ-CODE-UPDATE-ACCOUNT.
+  89 RQ-CODE-DELETE-ACCOUNT             VALUE RQ-CODE-DELETE-ACCOUNT.  
+  89 RQ-CODE-GET-ACCOUNTS               VALUE RQ-CODE-GET-ACCOUNTS.  
+  89 RQ-CODE-ALERT-ACCOUNT              VALUE RQ-CODE-ALERT-ACCOUNT.  
+END.
+
+DEF RP-CODE-ENUM-ACCOUNT TYPE ENUM BEGIN.
+  89 RP-CODE-ACCT-SUCCESS               VALUE RP-CODE-SUCCESS.
+END.
+  
+DEF ACCOUNT-DETAIL.
+  10 FIRST-NAME                         PIC X(32).
+  10 LAST-NAME                          PIC X(32).
+  10 ADDRESS1                           PIC X(80).
+  10 ADDRESS2                           PIC X(80).
+  10 CITY                               PIC X(32).
+  10 STATE                              PIC X(32).
+  10 POSTAL-CODE                        PIC X(16).
+  10 EMAIL-ADDRESS                      PIC X(32).
+  10 PHONE-NUMBER                       PIC X(20).
+END.
+
+DEF ACCOUNT.
+  10 ACCOUNT-NUMBER                     TYPE *.
+  10 ACCOUNT-DETAIL                     TYPE *.
+END.
+
+DEF GET-ACCOUNTS-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-GET-ACCOUNTS.
+  10 ITEM-COUNT                         TYPE *.
+END.
+  
+DEF GET-ACCOUNTS-RP.
+  10 RP-CODE                            TYPE *.
+  10 ITEM-COUNT                         TYPE *.
+  10 ACCOUNT                            TYPE * OCCURS 0 TO 50 TIMES
+                                          DEPENDING ON ITEM-COUNT.
+END.
+
+DEF CREATE-ACCOUNT-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-CREATE-ACCOUNT.
+  10 ACCOUNT-DETAIL                     TYPE *.
+END.
+
+DEF CREATE-ACCOUNT-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-ACCOUNT.
+  10 ACCOUNT                            TYPE *.
+END.
+
+DEF GET-ACCOUNT-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-GET-ACCOUNT.
+  10 ACCOUNT-NUMBER                     TYPE *.
+END.
+
+DEF GET-ACCOUNT-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-ACCOUNT.
+  10 ACCOUNT                            TYPE *.
+END.
+
+DEF UPDATE-ACCOUNT-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-UPDATE-ACCOUNT.
+  10 ACCOUNT-NUMBER                     TYPE *.
+  10 ACCOUNT-DETAIL                     TYPE *.
+END.
+   
+DEF UPDATE-ACCOUNT-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-ACCOUNT.
+  10 ACCOUNT                            TYPE *.
+END.
+
+DEF DELETE-ACCOUNT-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-DELETE-ACCOUNT.
+  10 ACCOUNT-NUMBER                     TYPE *.
+END.
+
+DEF DELETE-ACCOUNT-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-ACCOUNT.
+END.
+
+DEF ALERT-ACCOUNT-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-ALERT-ACCOUNT.
+  10 ACCOUNT-NUMBER                     TYPE *.
+  10 ALERT-MESSAGE                      TYPE CHARACTER 1024.
+END.
+
+DEF ALERT-ACCOUNT-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-ACCOUNT.
+END.
+  
+CONSTANT ACCOUNT-FILENAME VALUE "ACCTFILE".
+ 
+?FUP ACCTFUP !
+RECORD ACCOUNT-RECORD.
+  FILE IS "ACCTFILE" KEY-SEQUENCED AUDIT.
+  DEF IS ACCOUNT.
+  KEY IS ACCOUNT-NUMBER.
+END.
+?NOFUP
+
+!
+! Card constants and definitions.
+!
+CONSTANT RQ-CODE-CREATE-CARD            VALUE 1.
+CONSTANT RQ-CODE-GET-CARD               VALUE 2.
+CONSTANT RQ-CODE-UPDATE-CARD            VALUE 3.
+CONSTANT RQ-CODE-DELETE-CARD            VALUE 4.
+CONSTANT RQ-CODE-GET-CARDS              VALUE 5.
+
+DEF RQ-CODE-ENUM-CARD TYPE ENUM BEGIN.
+  89 RQ-CODE-CREATE-CARD                VALUE RQ-CODE-CREATE-CARD.
+  89 RQ-CODE-GET-CARD                   VALUE RQ-CODE-GET-CARD.
+  89 RQ-CODE-UPDATE-CARD                VALUE RQ-CODE-UPDATE-CARD.
+  89 RQ-CODE-DELETE-CARD                VALUE RQ-CODE-DELETE-CARD.  
+  89 RQ-CODE-GET-CARDS                  VALUE RQ-CODE-GET-CARDS.
+END.
+
+DEF RP-CODE-ENUM-CARD TYPE ENUM BEGIN.
+  89 RP-CODE-CARD-SUCCESS               VALUE RP-CODE-SUCCESS.
+END.
+
+DEF NAME-ON-CARD                        PIC X(64).   
+
+DEF CARD-DETAIL.
+  10 ACCOUNT-NUMBER                     TYPE *.
+  10 NAME-ON-CARD                       TYPE *.
+  10 EXP-MONTH                          PIC X(2).
+  10 EXP-YEAR                           PIC X(4).
+  10 SECURITY-CODE                      PIC X(4).
+* @LightWaveAttribute(scale="2")  
+  10 BALANCE                            TYPE BINARY 32.
+* @LightWaveAttribute(scale="2")  
+  10 SPENDING-LIMIT                     TYPE BINARY 32.
+* @LightWaveAttribute(scale="2")  
+  10 ALERT-LIMIT                        TYPE BINARY 32.
+* @LightWaveAttribute(type="boolean")
+  10 IS-LOCKED                          TYPE BINARY 16.
+END.
+
+DEF CARD.
+  10 CARD-NUMBER                        TYPE *.
+  10 CARD-DETAIL                        TYPE *.
+END.
+
+DEF GET-CARDS-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-GET-CARDS.
+  10 ACCOUNT-NUMBER                     TYPE *.
+  10 ITEM-COUNT                         TYPE *.
+END.
+  
+DEF GET-CARDS-RP.
+  10 RP-CODE                            TYPE *.
+  10 ITEM-COUNT                         TYPE *.
+  10 CARD                               TYPE * OCCURS 0 TO 50 TIMES
+                                          DEPENDING ON ITEM-COUNT.
+END.
+
+DEF CREATE-CARD-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-CREATE-CARD.
+  10 CARD-DETAIL                        TYPE *.
+END.
+
+DEF CREATE-CARD-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-CARD.
+  10 CARD                               TYPE *.
+END.
+
+DEF GET-CARD-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-GET-CARD.
+  10 CARD-NUMBER                        TYPE *.
+END.
+
+DEF GET-CARD-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-CARD.
+  10 CARD                               TYPE *.
+END.
+
+DEF UPDATE-CARD-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-UPDATE-CARD.
+  10 CARD-NUMBER                        TYPE *.
+  10 CARD-DETAIL                        TYPE *.
+END.
+
+DEF UPDATE-CARD-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-CARD.
+  10 CARD                               TYPE *.
+END.
+
+DEF DELETE-CARD-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-DELETE-CARD.
+  10 CARD-NUMBER                        TYPE *.
+END.
+
+DEF DELETE-CARD-RP.
+  10 RP-CODE                            TYPE RP-CODE-ENUM-CARD.
+END.
+        
+CONSTANT CARD-FILENAME VALUE "CARDFILE".
+CONSTANT CARD-ALTKEY-ACCOUNT-NUMBER VALUE 16718.
+
+?FUP CARDFUP !
+RECORD CARD-RECORD.
+  FILE IS "CARDFILE" KEY-SEQUENCED AUDIT.
+  DEF IS CARD.
+  KEY IS CARD-NUMBER.
+  KEY "AN" IS ACCOUNT-NUMBER.
+END.
+?NOFUP
+
+!
+! Payment constants and definitions.
+!
+CONSTANT RQ-CODE-CREATE-PAYMENT         VALUE 1.
+CONSTANT RQ-CODE-VOID-PAYMENT           VALUE 2.
+CONSTANT RQ-CODE-GET-TRANSACTION        VALUE 3.
+CONSTANT RQ-CODE-GET-TRANSACTIONS       VALUE 4.
+
+DEF RQ-CODE-ENUM-PAYMENT TYPE ENUM BEGIN.
+  89 RQ-CODE-CREATE-PAYMENT             VALUE RQ-CODE-CREATE-PAYMENT.
+  89 RQ-CODE-VOID-PAYMENT               VALUE RQ-CODE-VOID-PAYMENT.
+  89 RQ-CODE-GET-TRANSACTION            VALUE RQ-CODE-GET-TRANSACTION.
+  89 RQ-CODE-GET-TRANSACTIONS           VALUE RQ-CODE-GET-TRANSACTIONS.
+END.
+
+DEF RP-CODE-ENUM-PAYMENT TYPE ENUM BEGIN.
+  89 RP-CODE-PAYMENT-SUCCESS            VALUE RP-CODE-SUCCESS.
+END.
+
+DEF PAYMENT-DETAIL.
+* @LightWaveAttribute(scale="2")  
+  10 AMOUNT                             TYPE BINARY 32.
+  10 MERCHANT-NAME                      TYPE *.
+  10 CARD-NUMBER                        TYPE *.
+  10 NAME-ON-CARD                       TYPE *.
+  10 EXP-MONTH                          PIC X(2).
+  10 EXP-YEAR                           PIC X(4).
+  10 SECURITY-CODE                      PIC X(4).
+END.
+
+DEF TRANSACTION.
+  10 TRANSACTION-ID                     TYPE TRANSACTION-ID.
+  10 RELATED-TRANSACTION-ID             TYPE TRANSACTION-ID.
+  10 PAYMENT-RESPONSE-CODE              TYPE *. 
+  10 TRANSACTION-TYPE                   TYPE TRANSACTION-TYPE.
+* @LightWaveAttribute(type="timestamp")  
+  10 TIMESTAMP                          TYPE BINARY 64.
+  10 PAYMENT-DETAIL                     TYPE *.
+END.
+          
+DEF CREATE-PAYMENT-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-CREATE-PAYMENT.
+  10 PAYMENT-DETAIL                     TYPE *.
+END.
+  
+DEF CREATE-PAYMENT-RP.
+  10 RP-CODE                            TYPE *.
+  10 TRANSACTION                        TYPE *.
+END.
+
+DEF VOID-PAYMENT-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-VOID-PAYMENT.
+  10 TRANSACTION-ID                     TYPE TRANSACTION-ID.  
+END.
+
+DEF VOID-PAYMENT-RP.
+  10 RP-CODE                            TYPE *.
+  10 TRANSACTION-ID                     TYPE *.  
+END.
+
+DEF GET-TRANSACTION-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-GET-TRANSACTION.
+  10 TRANSACTION-ID                     TYPE TRANSACTION-ID.
+END.
+  
+DEF GET-TRANSACTION-RP.
+  10 RP-CODE                            TYPE *.
+  10 TRANSACTION                        TYPE *.
+END.
+  
+DEF GET-TRANSACTIONS-RQ.
+  10 RQ-CODE                            TYPE * VALUE RQ-CODE-GET-TRANSACTIONS.
+  10 ITEM-COUNT                         TYPE *.
+END.
+    
+DEF GET-TRANSACTIONS-RP.
+  10 RP-CODE                            TYPE *.
+  10 ITEM-COUNT                         TYPE *.
+  10 TRANSACTION                        TYPE * OCCURS 0 TO 50 TIMES
+                                          DEPENDING ON ITEM-COUNT.
+END.
+ 
+CONSTANT TRANSACTION-FILENAME VALUE "TRANFILE".
+ 
+?FUP TRANFUP !
+RECORD TRANSACTION-RECORD.
+  FILE IS "TRANFILE" KEY-SEQUENCED AUDIT.
+  DEF IS TRANSACTION.
+  KEY IS TRANSACTION-ID.
+END.
+?NOFUP  
+  
