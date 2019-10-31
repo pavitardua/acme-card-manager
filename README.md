@@ -9,7 +9,7 @@ The sample consists of the Pathway application and a browser based client applic
 
 | Installation Instructions |
 | -- | 
-| [NonStop Pathway Application](server/README.md) |
+| [NonStop Pathway Application](service/README.md) |
 | [Browser based client application](web-app/README.md) |
 
 

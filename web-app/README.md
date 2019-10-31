@@ -1,9 +1,9 @@
 # LightWave ACME Card Manager Web Application
-The ACME Card Manager Web Application is a Single Page Application (SPA) that implements the User Interface for the ACME Card Service. The entire application is implemented in handful of HTML, Javascript, CSS, and image files. The files can be deployed to any HTTP server capable of hosting static content.
+The ACME Card Manager Web Application is a Single Page Application (SPA) that implements the User Interface for the ACME Card Service. The entire application is implemented in a handful of HTML, Javascript, CSS, and image files. The files can be deployed to any HTTP server capable of hosting static content.
 
 The application must be accessed from an HTTP server. <em>It will not work by simply opening the files in a browser from the desktop filesystem.</em> There are a number of solutions available that will allow you to deploy the application to a web server, for example:
 + Deploy to a local copy of [Apache](https://httpd.apache.org/) or [Nginx](https://www.nginx.com/) server.
-+ Deploy to nn AWS S3 bucket configured for [static web site hosting](https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html).
++ Deploy to an AWS S3 bucket configured for [static web site hosting](https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html).
 + If using Visual Studio Code, use the [Live Server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer).
 + If using Node.js, use the [http-server package](https://www.npmjs.com/package/http-server).
 
@@ -21,7 +21,7 @@ Note that the port specified should be the service port on which the ACME Servic
 
 ### Mobile phone number format for SMS notification
 If the ACME Card Service is configured to send SMS notifications, the phone number associated with a user account must be formatted correctly. The number must be prefixed with "+" and followed by the country code and number, with no embedded spaces. Hyphens in the number are allowed if appropriate. SMS notification is skipped for any number that is not prefixed with "+". For example:
-+ 603-555-1234 - "+" ommitted - notification is skipped.
++ 603-555-1234 - "+" omitted - notification is skipped.
 + +603-555-1234 - Invalid - has US area code but no country code
 + +16035551234 - Correct format for US mobile number
 + +61419555123 - Correct format for Australia mobile number
