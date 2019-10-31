@@ -9,8 +9,8 @@ The sample consists of the Pathway application and a browser based client applic
 
 | Installation Instructions |
 | -- | 
-| [NonStop Pathway Application](service/README.md) |
-| [Browser based client application](web-app/README.md) |
+| [NonStop Pathway Application](service) |
+| [Browser based client application](web-app) |
 
 
 Assistance is available through the [NuWave Technologies Support Center](http://support.nuwavetech.com).
