@@ -112,7 +112,7 @@ static void create_payment(void* request) {
     date_and_time[1] = 1;
   } else {
     date_and_time[1]++;
-  }
+  }  
 
   date_and_time[2] = 1;
   exp_timestamp = COMPUTETIMESTAMP(date_and_time);
@@ -127,12 +127,12 @@ static void create_payment(void* request) {
   } else if (exp_timestamp <= now) {
     response_code = RESPONSE_CODE_EXPIRED;
   } else if (card.card_detail.is_locked != 0) {
-    memcpy(response_code, RESPONSE_CODE_RESTRICTED, sizeof(response_code));
+    response_code = RESPONSE_CODE_RESTRICTED;
   } else if (memcmp(card.card_detail.security_code,
                     rq->payment_detail.security_code,
                     sizeof(card.card_detail.security_code)) != 0) {
     response_code = RESPONSE_CODE_INV_CVV;
-  } else if (rq->payment_detail.amount <= 0) {
+  } else if (rq->payment_detail.amount <= 0) {  
     response_code = RESPONSE_CODE_INV_AMOUNT;
   } else if (-(card.card_detail.balance) + rq->payment_detail.amount >
              card.card_detail.spending_limit) {
