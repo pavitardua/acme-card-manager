@@ -218,6 +218,30 @@ $(async function () {
     return formatter.format(amt);
   }
 
+  /* Format as yyyy/mm/dd hh:mm:ss am/pm */
+  function formatDateTime(dateTime) {
+
+    let date = new Date(dateTime);
+
+    let dateString = date.getFullYear() + "/"; 
+    dateString += ("0" + (date.getMonth() + 1)).slice(-2) + "/";
+    dateString += ("0" + date.getDate()).slice(-2) + " ";
+
+    let h = date.getHours();
+    let ap = "AM";
+    if (h > 12) {
+      h -= 12;
+      ap = "PM";
+    } else if (h == 0) {
+      h = 12;
+    }
+    dateString += ("0" + h).slice(-2) + ":";
+    dateString += ("0" + date.getMinutes()).slice(-2) + ":";
+    dateString += ("0" + date.getSeconds()).slice(-2) + " " + ap;
+
+    return dateString
+  }
+
   function getTemplate(id) {
     let t = $(id).clone();
     t.removeClass("template");
@@ -792,8 +816,8 @@ $(async function () {
 
     transactions.forEach((item) => {
       let row = getTemplate("#transactions-table-row-template");
-
-      $("td:nth-of-type(1)", row).text(new Date(item.timestamp).toLocaleString());
+  
+      $("td:nth-of-type(1)", row).text(formatDateTime(item.timestamp));
       $("td:nth-of-type(2)", row).text((item.transactionId));
       $("td:nth-of-type(3)", row).text(transactionTypeToString(item));
       $("td:nth-of-type(4)", row).text(formatCurrency(item.paymentDetail.amount));
