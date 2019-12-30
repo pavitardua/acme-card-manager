@@ -5,9 +5,9 @@ All of these services are provided as REST APIs by LightWave Server working in c
 
 When enabled, the application Pathway servers use LightWave Client to send SMS notifications to simulated cardholders using the [AWS Simple Notification Service](https://aws.amazon.com/sns) REST API. Notifications are sent for sale and void transactions, and card lock status changes.
 
-![](./acme_card_diagram.png =900x)
+![](acme_card_diagram.png?raw=true)
 
-The sample consists of the Pathway application and a browser based client application. These compoents may be installed using these instructions:
+The sample consists of the Pathway application and a browser based client application. These components may be installed using these instructions:
 
 | Installation Instructions |
 | -- | 
