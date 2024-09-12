@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2019 NuWave Technologies, Inc. All rights reserved.
  */
- 
+
 #pragma nolist
 
 #include <cextdecs>
@@ -13,16 +13,21 @@
 #include <stdarg.h>
 #include <tal.h>
 #include <zsysc>
+#include <time.h>
 
 #include "acme.h"
-#include "sns.h"
+#include "lw.h"
+#include "sendg.h"
+#include "twlsms.h"
 
 #pragma list
 
 /* Static variables. */
 static short account_filenum;
 static char pathmon_name[32];
-static char* sns_serverclass = "SNS-SERVER";
+static char* sg_serverclass = "SG-SERVER";
+static int sms_enabled = 0;
+static int email_enabled = 0;
 
 /* Static function prototypes. */
 static int activate_transaction(const char* type);
@@ -34,7 +39,71 @@ static void get_accounts(void* request);
 static void reply_with_error(rp_code_def rp_code, error_code_def error_code,
                              const char* error_format, ...);
 static void update_account(void* request);
+static void populate_sendgrid_email_req_and_send(
+    account_def account, alert_account_rq_def* alert_account_request);
+static void
+populate_twilio_sms_req_and_send(account_def account,
+                                 alert_account_rq_def* alert_account_request);
+static const char* format_numeric(long long value, short scale);
+/*
+static char* extract_value(const char* str, const char* key);
 
+*/
+static void get_current_date(char* buffer);
+
+static const char* format_numeric(long long value, short scale) {
+
+  short rc;
+  char iformat[256];
+  short count = 0;
+  char eformat[32];
+  static char buffer[64];
+  char* result = buffer;
+  short length = 0;
+  char* p;
+
+  /* Build the format. */
+  memset(eformat, 0, sizeof(eformat));
+  p = eformat;
+  p += sprintf(eformat, "M'ZZZZZZZZ9.");
+  memset(p, '9', scale);
+  strcat(p, "'");
+
+  rc = FORMATCONVERTX(iformat, (short)sizeof(iformat), eformat,
+                      (short)strlen(eformat), NULL, &count, 1);
+
+  if (rc <= 0) {
+    snprintf(buffer, sizeof(buffer), "FORMATCONVERTX=%d", rc);
+  } else {
+    struct {
+      long long* dataptr;
+      short datatype;
+      short databytes;
+      short occurs;
+    } list[1];
+
+    list[0].dataptr = &value;
+    list[0].datatype = (short)(((scale & 0XFF) << 8) | 6);
+    list[0].databytes = sizeof(value);
+    list[0].occurs = 1;
+
+    rc = FORMATDATAX(buffer, (short)sizeof(buffer), 1, &length, (short*)iformat,
+                     (short*)list, 1, 0);
+
+    if (rc != 0) {
+      snprintf(buffer, sizeof(buffer), "FORMATDATAX=%d\n", rc);
+    } else {
+      buffer[length] = 0;
+    }
+  }
+
+  /* Trim leading spaces. */
+  while (*result == ' ') {
+    result++;
+  }
+
+  return result;
+}
 /* Static functions. */
 static int activate_transaction(const char* type) {
   int cc;
@@ -55,8 +124,6 @@ static int activate_transaction(const char* type) {
 static void alert_account(void* request) {
   alert_account_rq_def* rq = (alert_account_rq_def*)request;
   alert_account_rp_def rp;
-  publish_with_post_rq_def publish_rq;
-  publish_with_post_other_rp_def publish_rp;
   account_def account;
   short rc;
 
@@ -64,24 +131,133 @@ static void alert_account(void* request) {
   FILE_SETKEY_(account_filenum, rq->account_number, sizeof(rq->account_number),
                0, SETKEY_EXACT);
   rc = FILE_READ64_(account_filenum, (char _ptr64*)&account, sizeof(account));
-  
-  if (rc == 0 && *account.account_detail.phone_number == '+') {    
-   
-    /* Send the alert. */
-    memset(&publish_rq, 0, sizeof(publish_rq));
-    publish_rq.lightwave_rq_header.rq_code = rq_publish_with_post;  
-    strncpy(publish_rq.phone_number, account.account_detail.phone_number, sizeof(account.account_detail.phone_number));
-    strcpy(publish_rq.message_rw, rq->alert_message);
 
-    SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
-                       (char*)sns_serverclass, (short)strlen(sns_serverclass),
-                       (char*)&publish_rq, (char*)&publish_rp,
-                       sizeof(publish_rq), sizeof(publish_rp));
+  if (sms_enabled != 0 && rc == 0) {
+    populate_twilio_sms_req_and_send(account, rq);
   }
 
+  if (email_enabled && rc == 0) {
+    populate_sendgrid_email_req_and_send(account, rq);
+  }
   /* Alerts are fire and forget so reply immediately. */
   memset(&rp, 0, sizeof(rp));
   REPLYX((const char*)&rp, sizeof(rp));
+}
+
+static void
+populate_twilio_sms_req_and_send(account_def account,
+                                 alert_account_rq_def* alert_account_request) {
+  static char* twilio_sms_serverclass = "TWL-SERVER";
+  short rc;
+  char* p;
+  send_smsrq_def send_sms_req;
+  send_sms_201_rp_def send_sms_rep;
+  /* Reset request*/
+  memset(&send_sms_req, 0, sizeof(send_sms_req));
+  /* Get twilio account sid - env variable should be in CAPS*/
+  if ((p = getenv("TWILIO-ACCOUNT-SID")) == NULL) {
+    printf("ENV PARAM twilio-account-sid is not set \n");
+  } else {
+    strncpy(send_sms_req.account_sid, p, sizeof(send_sms_req.account_sid));
+  }
+
+  /* Get twilio phone no to send the SMS from*/
+  if ((p = getenv("TWILIO-PHONE-NO")) == NULL) {
+    printf("ENV PARAM twilio-phone-no is not set \n");
+  } else {
+    strncpy(send_sms_req.from_rw, p, sizeof(send_sms_req.from_rw));
+  }
+
+  /*Set header with request code*/
+  send_sms_req.lightwave_rq_header.rq_code = rq_send_sms;
+
+  /* Read the phone number from account details*/
+  strcpy(send_sms_req.to_rw, account.account_detail.phone_number);
+
+  /* Set SMS Body*/
+  strcpy(send_sms_req.body, alert_account_request->alert_message);
+
+  rc = SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
+                          (char*)twilio_sms_serverclass,
+                          (short)strlen(twilio_sms_serverclass),
+                          (char*)&send_sms_req, (char*)&send_sms_rep,
+                          sizeof(send_sms_req), sizeof(send_sms_rep));
+}
+
+static void populate_sendgrid_email_req_and_send(
+    account_def account, alert_account_rq_def* alert_account_request) {
+  short rc;
+  post_send_rq_def sg_request;
+  post_send_202_rp_def sg_rp;
+  char today_date[11];
+
+  memset(&sg_request, 0, sizeof(sg_request));
+
+  sg_request.lightwave_rq_header.rq_code = rq_post_send;
+
+  sg_request.post_send_v_3.personalizations_count = 1;
+  sg_request.post_send_v_3.personalizations[0].to_count = 1;
+  strcpy(sg_request.post_send_v_3.personalizations[0].to_rw[0].email,
+         account.account_detail.email_address);
+  strcpy(sg_request.post_send_v_3.from_rw.email,
+         getenv("SG-NUWAVETECH-FROM-EMAIL"));
+  strcpy(sg_request.post_send_v_3.subject, "ACME Transaction alert");
+  strcpy(
+      sg_request.post_send_v_3.personalizations[0].dynamic_template_data.user,
+      alert_account_request->name_on_card);
+
+  strcpy(sg_request.post_send_v_3.personalizations[0]
+             .dynamic_template_data.vendor_name,
+         alert_account_request->merchant_name);
+  sg_request.post_send_v_3.personalizations[0]
+      .dynamic_template_data.transaction_amount =
+      atoi(format_numeric(alert_account_request->transaction_amount, 2));
+  strcpy(sg_request.post_send_v_3.personalizations[0]
+             .dynamic_template_data.transaction_id,
+         alert_account_request->transaction_id);
+  snprintf(sg_request.post_send_v_3.personalizations[0]
+               .dynamic_template_data.cc_last_4,
+           sizeof(sg_request.post_send_v_3.personalizations[0]
+                      .dynamic_template_data.cc_last_4),
+           "%-.4s", alert_account_request->card_number);
+  strcpy(sg_request.post_send_v_3.personalizations[0]
+             .dynamic_template_data.alert_message,
+         alert_account_request->alert_message);
+
+  get_current_date(today_date);
+  strcpy(sg_request.post_send_v_3.personalizations[0]
+             .dynamic_template_data.transaction_date,
+         today_date);
+
+  if (strlen(sg_request.post_send_v_3.personalizations[0]
+                 .dynamic_template_data.transaction_id) > 0) {
+    strcpy(sg_request.post_send_v_3.template_id,
+           getenv("SG-TRANSACTION-TEMPLATE-ID"));
+  } else {
+    strcpy(sg_request.post_send_v_3.template_id,
+           getenv("SG-CARD-STATUS-TEMPLATE-ID"));
+  }
+  if (alert_account_request->transaction_type == 1) {
+    strcpy(sg_request.post_send_v_3.personalizations[0]
+               .dynamic_template_data.transaction_type,
+           "sale");
+  } else {
+    strcpy(sg_request.post_send_v_3.personalizations[0]
+               .dynamic_template_data.transaction_type,
+           "void");
+  }
+
+  rc = SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
+                          (char*)sg_serverclass, (short)strlen(sg_serverclass),
+                          (char*)&sg_request, (char*)&sg_rp, sizeof(sg_request),
+                          sizeof(sg_rp));
+}
+
+static void get_current_date(char* buffer) {
+  time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
+  sprintf(buffer, "%02d/%02d/%04d", tm.tm_mon + 1, tm.tm_mday,
+          tm.tm_year + 1900);
 }
 
 static void create_account(void* request) {
@@ -226,7 +402,7 @@ static void get_account(void* request) {
   }
 
   memcpy(&rp.account, &account, sizeof(rp.account));
-  
+
   /* Send the reply. */
   REPLYX((const char*)&rp, sizeof(rp));
 }
@@ -329,7 +505,7 @@ static void update_account(void* request) {
   REPLYX((const char*)&rp, sizeof(rp));
   RESUMETRANSACTION(0);
 }
- 
+
 int main(int argc, char* argv[], char** envp) {
 
   int open_count;
@@ -341,7 +517,21 @@ int main(int argc, char* argv[], char** envp) {
   char request[57344];
   short* rqCode;
   char* p;
-  
+  char* q;
+
+  /* Check for SMS enabled. Default to no. */
+  if ((p = getenv("ENABLE-SMS")) == NULL) {
+    sms_enabled = 0;
+  } else {
+    sms_enabled = atoi(p);
+  }
+
+  if ((q = getenv("ENABLE-EMAIL")) == NULL) {
+    email_enabled = 0;
+  } else {
+    email_enabled = atoi(q);
+  }
+
   /* Get our pathmon name. */
   if ((p = getenv("PATHMON-NAME")) == NULL) {
     printf("PARAM PATHMON-NAME is not set.\n");

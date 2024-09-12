@@ -4,7 +4,7 @@
 # Process log configuration.
 [log]
 file=zzlog
-level=info   # log at info level.
+level=info  # log at info level.
 format=text
 
 # Diagnostic log configuration.
@@ -12,4 +12,4 @@ format=text
 enabled=1
 subvol=*
 replyCodeFilter=1,2
-httpStatusFilter=400:599    
+httpStatusFilter=400:599

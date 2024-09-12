@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2019 NuWave Technologies, Inc. All rights reserved.
  */
- 
+
 #pragma nolist
 
 #include <cextdecs>
@@ -221,7 +221,7 @@ static void get_cards(void* request) {
 
     memcpy(&rp.card[rp.item_count], &card, sizeof(card_def));
     rp.item_count++;
-  }  
+  }
 
   /* Send the reply. */
   REPLYX((const char*)&rp, sizeof(rp));
@@ -312,10 +312,10 @@ static void update_card(void* request) {
 
     /* Build and send the alert message. */
     snprintf(alert_rq.alert_message, sizeof(alert_rq.alert_message),
-             "ACME Card account %-.4s:  Your card has been %s.",
-             &card.card_number[12],
-             (card.card_detail.is_locked ? "locked" : "unlocked"));
- 
+             "Your ACME Card account %-.4s has been %s.", &card.card_number[12],
+             (card.card_detail.is_locked ? "blocked" : "un-blocked"));
+    strcpy(alert_rq.name_on_card, card.card_detail.name_on_card);
+    strcpy(alert_rq.transaction_id, "");
     SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
                        (char*)acct_serverclass, (short)strlen(acct_serverclass),
                        (char*)&alert_rq, (char*)&alert_rp, sizeof(alert_rq),
@@ -329,12 +329,12 @@ int main(int argc, char* argv[], char** envp) {
   int cc;
   short rc;
   short filenum;
-  unsigned short count_read; 
+  unsigned short count_read;
   int done;
   char request[57344];
   short* rqCode;
   char* p;
- 
+
   /* Get our pathmon name. */
   if ((p = getenv("PATHMON-NAME")) == NULL) {
     printf("PARAM PATHMON^NAME is not set.\n");
@@ -348,7 +348,7 @@ int main(int argc, char* argv[], char** envp) {
   } else {
     sms_enabled = atoi(p);
   }
-  
+
   /* Open $RECEIVE */
   if ((rc = FILE_OPEN_("$RECEIVE", 8, &filenum, , , 0, 1)) != 0) {
     printf("Unable to open $RECEIVE, file system error %d\n", (int)rc);

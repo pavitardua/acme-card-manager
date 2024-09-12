@@ -1,0 +1,7 @@
+#
+#Your SENDGRID APIKEY
+#
+[auth]
+method=auth-token
+Header=Authorization
+Token=Bearer SG.*****************************************J3Tk

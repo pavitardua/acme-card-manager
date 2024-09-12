@@ -1,25 +1,26 @@
 ?tacl routine
 #frame
 
-== Start and configure the Pathway 
+== Start and configure the Pathway
 
-#push client, console, pathmon^name  
+#push client, console, pathmon^name
 
 == Customize these parameters for your system
 
-#set client         [#param lwc-isv].CLIENT 
+#set client         [#param lwc-isv].CLIENT
 #set console        $zhome
-#set pathmon^name   [#param pathmon-name] 
+#set console        [console]
+#set pathmon^name   [#param pathmon-name]
 
 [#if [#EMPTYV pathmon^name] |then|
   #output Pathmon process name not set.
   #output Did you run the SETENV macro?
   #unframe
-  #return  
-]         
+  #return
+]
 
 #push rc, class, attribute, tcpip^process
-#setmany rc class attribute tcpip^process, [#defineinfo =tcpip^process^name] 
+#setmany rc class attribute tcpip^process, [#defineinfo =tcpip^process^name]
 
 [#if [#EMPTYV tcpip^process] |then|
   #set tcpip^process $ZTC0
@@ -64,7 +65,7 @@ inlprefix +
 + start pathway cold !
 
 + reset server
-+ set server cpus                 0:1  
++ set server cpus                 0:1
 + set server createdelay          10 secs
 + set server deletedelay          10 mins
 + set server highpin              on
@@ -72,17 +73,24 @@ inlprefix +
 + set server maxservers           4
 + set server maxlinks             20
 + set server numstatic            0
-+ set server tmf                  on 
++ set server tmf                  on
 + set server debug                off
 + set server in                   [console]
 + set server out                  [console]
 + set server program              acctserv
-+ set server param pathmon-name   [#param pathmon-name] 
++ set server param pathmon-name   [#param pathmon-name]
 + set server param enable-sms     [#param enable-sms]
++ set server param enable-email   [#param enable-email]
++ set server param sg-nuwavetech-from-name      [#param sg-nuwavetech-from-name]
++ set server param sg-nuwavetech-from-email     [#param sg-nuwavetech-from-email]
++ set server param sg-transaction-template-id   [#param sg-transaction-template-id]
++ set server param sg-card-status-template-id   [#param sg-card-status-template-id]
++ set server param twilio-account-sid   [#param twilio-account-sid]
++ set server param twilio-phone-no   [#param twilio-phone-no]
 + add server acct-server
 
 + reset server
-+ set server cpus                 0:1  
++ set server cpus                 0:1
 + set server createdelay          10 secs
 + set server deletedelay          10 mins
 + set server highpin              on
@@ -95,12 +103,13 @@ inlprefix +
 + set server in                   [console]
 + set server out                  [console]
 + set server program              cardserv
-+ set server param pathmon-name   [#param pathmon-name] 
++ set server param pathmon-name   [#param pathmon-name]
 + set server param enable-sms     [#param enable-sms]
++ set server param enable-email   [#param enable-email]
 + add server card-server
 
 + reset server
-+ set server cpus                 0:1  
++ set server cpus                 0:1
 + set server createdelay          10 secs
 + set server deletedelay          10 mins
 + set server highpin              on
@@ -113,12 +122,13 @@ inlprefix +
 + set server in                   [console]
 + set server out                  [console]
 + set server program              payserv
-+ set server param pathmon-name   [#param pathmon-name] 
++ set server param pathmon-name   [#param pathmon-name]
 + set server param enable-sms     [#param enable-sms]
++ set server param enable-email   [#param enable-email]
 + add server pay-server
 
 + reset server
-+ set server cpus                 0:1  
++ set server cpus                 0:1
 + set server createdelay          10 secs
 + set server deletedelay          10 mins
 + set server highpin              on
@@ -126,7 +136,7 @@ inlprefix +
 + set server maxservers           4
 + set server maxlinks             20
 + set server numstatic            0
-+ set server tmf                  off 
++ set server tmf                  off
 + set server debug                off
 + set server in                   [console]
 + set server out                  [console]
@@ -138,6 +148,52 @@ inlprefix +
 + set server param base-url       [#param sns-base-url]
 + set server param auth           awsauth
 + add server sns-server
+
++ reset server
++ set server cpus                 0:1
++ set server createdelay          10 secs
++ set server deletedelay          10 mins
++ set server highpin              on
++ set server linkdepth            4
++ set server maxservers           4
++ set server maxlinks             20
++ set server numstatic            0
++ set server tmf                  off
++ set server debug                off
++ set server in                   [console]
++ set server out                  [console]
++ set server program              [client]
++ set server param log            +logcfg
++ set server param diag-log       +logcfg
++ set server param monitor        "api log diag-log auth"
++ set server param api            sgapi
++ set server param base-url       [#param sg-base-url]
++ set server param auth           sgauth
++ set server param pathmon-name   [#param pathmon-name]
++ add server sg-server
+
+
++ reset server
++ set server cpus                 0:1
++ set server createdelay          10 secs
++ set server deletedelay          10 mins
++ set server highpin              on
++ set server linkdepth            4
++ set server maxservers           4
++ set server maxlinks             20
++ set server numstatic            0
++ set server tmf                  off
++ set server debug                off
++ set server in                   [console]
++ set server out                  [console]
++ set server program              [client]
++ set server param log            +logcfg
++ set server param diag-log       +logcfg
++ set server param monitor        "api log diag-log auth"
++ set server param api            twsmsapi
++ set server param base-url       [#param twilio-messaging-base-url]
++ set server param auth           twauth
++ add server twl-server
 
 + start server *
 

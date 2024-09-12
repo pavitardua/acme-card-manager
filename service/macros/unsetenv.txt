@@ -2,11 +2,13 @@
 
 == Clear params set by SETENV.
 
-clear param pathmon-name     
-clear param lws-isv          
-clear param lwc-isv          
-clear param enable-sms       
-clear param sns-base-url   
+clear param pathmon-name
+clear param lws-isv
+clear param lwc-isv
+clear param enable-sms
+clear param enable-email
+clear param sg-base-url
+clear param sns-base-url
 
 
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2019 NuWave Technologies, Inc. All rights reserved.
  */
- 
+
 #pragma nolist
 
 #include <cextdecs>
@@ -16,7 +16,7 @@
 #include <zsysc>
 
 #include "acme.h"
-#include "sns.h"
+/* #include "sns.h" */
 
 #pragma list
 
@@ -25,7 +25,6 @@ static short transaction_filenum;
 static short card_filenum;
 static char pathmon_name[32];
 static char* acct_serverclass = "ACCT-SERVER";
-static int sms_enabled = 0;
 
 /* Static function prototypes. */
 static int activate_transaction(const char* type);
@@ -33,6 +32,7 @@ static void create_payment(void* request);
 static const char* create_transaction_id(void);
 static const char* format_numeric(long long value, short scale);
 static void get_transaction(void* request);
+
 static void get_transactions(void* request);
 static int parse_int(const char* string, size_t len);
 static void reply_with_error(rp_code_def rp_code, error_code_def error_code,
@@ -96,7 +96,7 @@ static void create_payment(void* request) {
     }
     return;
   }
- 
+
   /* Get card expiration year and month. index 0 - year, 1 - month, 2 - day */
   card_yyyy =
       parse_int(card.card_detail.exp_year, sizeof(card.card_detail.exp_year));
@@ -112,7 +112,7 @@ static void create_payment(void* request) {
     date_and_time[1] = 1;
   } else {
     date_and_time[1]++;
-  }  
+  }
 
   date_and_time[2] = 1;
   exp_timestamp = COMPUTETIMESTAMP(date_and_time);
@@ -132,7 +132,7 @@ static void create_payment(void* request) {
                     rq->payment_detail.security_code,
                     sizeof(card.card_detail.security_code)) != 0) {
     response_code = RESPONSE_CODE_INV_CVV;
-  } else if (rq->payment_detail.amount <= 0) {  
+  } else if (rq->payment_detail.amount <= 0) {
     response_code = RESPONSE_CODE_INV_AMOUNT;
   } else if (-(card.card_detail.balance) + rq->payment_detail.amount >
              card.card_detail.spending_limit) {
@@ -193,7 +193,8 @@ static void create_payment(void* request) {
    * If successful and the alert limit is met, then send an alert. Note that the
    * alert is not part of the transaction and we don't care if it fails.
    */
-  if (sms_enabled != 0 && reply_code == RP_CODE_SUCCESS && 
+
+  if (reply_code == RP_CODE_SUCCESS &&
       rq->payment_detail.amount >= card.card_detail.alert_limit) {
     alert_account_rq_def alert_rq;
     alert_account_rp_def alert_rp;
@@ -211,6 +212,18 @@ static void create_payment(void* request) {
              format_numeric(transaction.payment_detail.amount, 2),
              sizeof(transaction.payment_detail.merchant_name),
              transaction.payment_detail.merchant_name);
+    memcpy(alert_rq.card_number, card.card_number,
+           sizeof(alert_rq.card_number));
+
+    memcpy(alert_rq.name_on_card, card.card_detail.name_on_card,
+           sizeof(alert_rq.name_on_card));
+
+    alert_rq.transaction_amount = transaction.payment_detail.amount;
+    memcpy(alert_rq.merchant_name, transaction.payment_detail.merchant_name,
+           sizeof(alert_rq.merchant_name));
+    alert_rq.transaction_type = transaction.transaction_type;
+    memcpy(alert_rq.transaction_id, transaction.transaction_id,
+           sizeof(alert_rq.transaction_id));
 
     SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
                        (char*)acct_serverclass, (short)strlen(acct_serverclass),
@@ -516,7 +529,7 @@ static void void_payment(void* request) {
    * If the alert limit is met, then send an alert. Note that the alert is not
    * part of the transaction and we don't care if it fails.
    */
-  if (sms_enabled != 0 && paymentTransaction.payment_detail.amount >=
+  if (paymentTransaction.payment_detail.amount >=
       card.card_detail.alert_limit) {
     alert_account_rq_def alert_rq;
     alert_account_rp_def alert_rp;
@@ -534,6 +547,20 @@ static void void_payment(void* request) {
              format_numeric(paymentTransaction.payment_detail.amount, 2),
              sizeof(paymentTransaction.payment_detail.merchant_name),
              paymentTransaction.payment_detail.merchant_name);
+
+    memcpy(alert_rq.card_number, card.card_number,
+           sizeof(alert_rq.card_number));
+
+    memcpy(alert_rq.name_on_card, card.card_detail.name_on_card,
+           sizeof(alert_rq.name_on_card));
+
+    alert_rq.transaction_amount = paymentTransaction.payment_detail.amount;
+    memcpy(alert_rq.merchant_name,
+           paymentTransaction.payment_detail.merchant_name,
+           sizeof(alert_rq.merchant_name));
+    alert_rq.transaction_type = voidTransaction.transaction_type;
+    memcpy(alert_rq.transaction_id, paymentTransaction.transaction_id,
+           sizeof(alert_rq.transaction_id));
 
     SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
                        (char*)acct_serverclass, (short)strlen(acct_serverclass),
@@ -576,18 +603,11 @@ int main(int argc, char* argv[], char** envp) {
 
   /* Get our pathmon name. */
   if ((p = getenv("PATHMON-NAME")) == NULL) {
-    printf("PARAM PATHMON^NAME is not set.\n");  
+    printf("PARAM PATHMON^NAME is not set.\n");
     return -1;
   }
   strncpy(pathmon_name, p, sizeof(pathmon_name));
 
-  /* Check for SMS enabled. Default to no. */
-  if ((p = getenv("ENABLE-SMS")) == NULL) {
-    sms_enabled = 0;
-  } else {
-    sms_enabled = atoi(p);
-  }
-  
   /* Open $RECEIVE */
   if ((rc = FILE_OPEN_("$RECEIVE", 8, &filenum, , , 0, 1)) != 0) {
     printf("Unable to open $RECEIVE, file system error %d\n", (int)rc);

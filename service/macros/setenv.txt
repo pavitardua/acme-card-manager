@@ -1,15 +1,21 @@
 ?tacl macro
 
 == Set runtime environment. Customize this for your environment.
- 
-#set #param pathmon-name        $ACME
+
+#set #param pathmon-name        $MACME
 #set #param lws-isv             [#defaults/current/]
-#set #param enable-sms          0
+#set #param enable-sms          1
+#set #param enable-email        1
 #set #param lwc-isv             [#defaults/current/]
 #set #param sns-base-url        https://sns.us-east-1.amazonaws.com
+#set #param sg-base-url         https://api.sendgrid.com/v3
+#set #param sg-nuwavetech-from-name NuwaveTech
+#set #param sg-nuwavetech-from-email  pavitar@mobiuso.com
+#set #param sg-transaction-template-id  d-e46fdb027420484fbdcd66145f698fe8
+#set #param sg-card-status-template-id  d-b294ae60034644b7b17fb067f4cbe96d
+#set #param twilio-account-sid  *******************
+#set #param twilio-phone-no +12566699618
+#set #param twilio-messaging-base-url https://api.twilio.com/2010-04-01
 
 delete define =acme?pathmon
 add define =acme-pathmon, class map, file [#param pathmon-name]
-
-
- 
