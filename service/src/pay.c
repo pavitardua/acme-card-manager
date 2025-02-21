@@ -16,7 +16,8 @@
 #include <zsysc>
 
 #include "acme.h"
-/* #include "sns.h" */
+#include "lwc.h"
+#include "iprod.h"
 
 #pragma list
 
@@ -25,6 +26,7 @@ static short transaction_filenum;
 static short card_filenum;
 static char pathmon_name[32];
 static char* acct_serverclass = "ACCT-SERVER";
+static char* kfk_producer_serverclass = "KFK-PRODUCERSVR";
 
 /* Static function prototypes. */
 static int activate_transaction(const char* type);
@@ -39,6 +41,8 @@ static void reply_with_error(rp_code_def rp_code, error_code_def error_code,
                              const char* error_format, ...);
 static void reset_database(void);
 static void void_payment(void* request);
+static void populate_kakfka_produce_record_request(const char* json_str,
+                                                   int rq_code);
 
 /* Static functions. */
 static int activate_transaction(const char* type) {
@@ -73,11 +77,13 @@ static void create_payment(void* request) {
   size_t i;
   const char* response_code;
   rp_code_def reply_code;
+  char json_str[2000];
 
   /* Activate a transaction. */
-  if (activate_transaction("create") != 0) {
+  /*if (activate_transaction("create") != 0) {
     return;
-  }
+  }*/
+  BEGINTRANSACTION();
 
   /* Get the card and lock it for update. */
   FILE_SETKEY_(card_filenum, rq->payment_detail.card_number,
@@ -181,7 +187,7 @@ static void create_payment(void* request) {
                      (int)rc);
     return;
   }
-
+  ENDTRANSACTION();
   /* Initialize and send the reply. */
   memset(&rp, 0, sizeof(rp));
   rp.rp_code = reply_code;
@@ -193,42 +199,96 @@ static void create_payment(void* request) {
    * If successful and the alert limit is met, then send an alert. Note that the
    * alert is not part of the transaction and we don't care if it fails.
    */
+  if (reply_code == RP_CODE_SUCCESS) {
 
-  if (reply_code == RP_CODE_SUCCESS &&
-      rq->payment_detail.amount >= card.card_detail.alert_limit) {
-    alert_account_rq_def alert_rq;
-    alert_account_rp_def alert_rp;
+    sprintf(json_str,
+            "{\n"
+            "  \"key\": {\n"
+            "    \"data\": \"%s\",\n"
+            "    \"type\": \"JSON\"\n"
+            "  },\n"
+            "  \"value\": {\n"
+            "    \"data\": {\n"
+            "      \"amount\":  %d,\n"
+            "      \"cc_number\": \"%s\",\n"
+            "      \"merchant_name\": \"%s\",\n"
+            "      \"name_on_card\": \"%s\",\n"
+            "      \"security_code\":  \"%s\"\n"
+            "    },\n"
+            "    \"type\": \"JSON\"\n"
+            "  },\n"
+            "  \"headers\": []\n"
+            "}",
+            rp.transaction.transaction_id, rp.transaction.payment_detail.amount,
+            2, card.card_number, rp.transaction.payment_detail.merchant_name,
+            card.card_detail.name_on_card, card.card_detail.security_code);
 
-    memset(&rq, 0, sizeof(rq));
-    alert_rq.rq_code = RQ_CODE_ALERT_ACCOUNT;
-    memcpy(alert_rq.account_number, card.card_detail.account_number,
-           sizeof(alert_rq.account_number));
+    printf("%s\n", json_str);
+    populate_kakfka_produce_record_request(json_str, rq_produce_transactions);
 
-    /* Build and send the alert message. */
-    snprintf(alert_rq.alert_message, sizeof(alert_rq.alert_message),
-             "ACME Card account %-.4s:  A purchase in the amount of $%s at "
-             "%-.*s has been charged to your account.",
-             &card.card_number[12],
-             format_numeric(transaction.payment_detail.amount, 2),
-             sizeof(transaction.payment_detail.merchant_name),
-             transaction.payment_detail.merchant_name);
-    memcpy(alert_rq.card_number, card.card_number,
-           sizeof(alert_rq.card_number));
+    if (rq->payment_detail.amount >= card.card_detail.alert_limit) {
+      alert_account_rq_def alert_rq;
+      alert_account_rp_def alert_rp;
 
-    memcpy(alert_rq.name_on_card, card.card_detail.name_on_card,
-           sizeof(alert_rq.name_on_card));
+      memset(&rq, 0, sizeof(rq));
+      alert_rq.rq_code = RQ_CODE_ALERT_ACCOUNT;
+      memcpy(alert_rq.account_number, card.card_detail.account_number,
+             sizeof(alert_rq.account_number));
 
-    alert_rq.transaction_amount = transaction.payment_detail.amount;
-    memcpy(alert_rq.merchant_name, transaction.payment_detail.merchant_name,
-           sizeof(alert_rq.merchant_name));
-    alert_rq.transaction_type = transaction.transaction_type;
-    memcpy(alert_rq.transaction_id, transaction.transaction_id,
-           sizeof(alert_rq.transaction_id));
+      /* Build and send the alert message. */
+      snprintf(alert_rq.alert_message, sizeof(alert_rq.alert_message),
+               "ACME Card account %-.4s:  A purchase in the amount of $%s at "
+               "%-.*s has been charged to your account.",
+               &card.card_number[12],
+               format_numeric(transaction.payment_detail.amount, 2),
+               sizeof(transaction.payment_detail.merchant_name),
+               transaction.payment_detail.merchant_name);
+      memcpy(alert_rq.card_number, card.card_number,
+             sizeof(alert_rq.card_number));
 
-    SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
-                       (char*)acct_serverclass, (short)strlen(acct_serverclass),
-                       (char*)&alert_rq, (char*)&alert_rp, sizeof(alert_rq),
-                       sizeof(alert_rp));
+      memcpy(alert_rq.name_on_card, card.card_detail.name_on_card,
+             sizeof(alert_rq.name_on_card));
+
+      alert_rq.transaction_amount = transaction.payment_detail.amount;
+      memcpy(alert_rq.merchant_name, transaction.payment_detail.merchant_name,
+             sizeof(alert_rq.merchant_name));
+      alert_rq.transaction_type = transaction.transaction_type;
+      memcpy(alert_rq.transaction_id, transaction.transaction_id,
+             sizeof(alert_rq.transaction_id));
+
+      SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
+                         (char*)acct_serverclass,
+                         (short)strlen(acct_serverclass), (char*)&alert_rq,
+                         (char*)&alert_rp, sizeof(alert_rq), sizeof(alert_rp));
+    }
+  }
+}
+
+static void populate_kakfka_produce_record_request(const char* json_str,
+                                                   int rq_code) {
+
+  short rc;
+  produce_record_rq_def produce_record_rq;
+  produce_response_def produce_record_rp;
+
+  memset(&produce_record_rq, 0, sizeof(produce_record_rq));
+
+  produce_record_rq.lightwave_rq_header.rq_code = rq_code;
+
+  strcpy(produce_record_rq.blob, json_str);
+  produce_record_rq.blob_size = strlen(json_str);
+
+  rc = SERVERCLASS_SENDL_((char*)pathmon_name, (short)strlen(pathmon_name),
+                          (char*)kfk_producer_serverclass,
+                          (short)strlen(kfk_producer_serverclass),
+                          (char*)&produce_record_rq, (char*)&produce_record_rp,
+                          sizeof(produce_record_rq), sizeof(produce_record_rp));
+  if (rc != 0) {
+    reply_with_error(RP_CODE_INTERNAL_ERROR, ERROR_CODE_IO_ERROR,
+                     "Error %d occured while attempting to "
+                     "invoke kafka producer.",
+                     (int)rc);
+    return;
   }
 }
 

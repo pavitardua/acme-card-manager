@@ -15,10 +15,12 @@
 #include <zsysc>
 #include <time.h>
 
+
 #include "acme.h"
 #include "lw.h"
 #include "sendg.h"
 #include "twlsms.h"
+
 
 #pragma list
 
@@ -26,6 +28,7 @@
 static short account_filenum;
 static char pathmon_name[32];
 static char* sg_serverclass = "SG-SERVER";
+
 static int sms_enabled = 0;
 static int email_enabled = 0;
 
@@ -44,6 +47,7 @@ static void populate_sendgrid_email_req_and_send(
 static void
 populate_twilio_sms_req_and_send(account_def account,
                                  alert_account_rq_def* alert_account_request);
+
 static const char* format_numeric(long long value, short scale);
 /*
 static char* extract_value(const char* str, const char* key);
@@ -139,6 +143,7 @@ static void alert_account(void* request) {
   if (email_enabled && rc == 0) {
     populate_sendgrid_email_req_and_send(account, rq);
   }
+
   /* Alerts are fire and forget so reply immediately. */
   memset(&rp, 0, sizeof(rp));
   REPLYX((const char*)&rp, sizeof(rp));
@@ -182,6 +187,13 @@ populate_twilio_sms_req_and_send(account_def account,
                           (short)strlen(twilio_sms_serverclass),
                           (char*)&send_sms_req, (char*)&send_sms_rep,
                           sizeof(send_sms_req), sizeof(send_sms_rep));
+  if (rc != 0) {
+    reply_with_error(RP_CODE_INTERNAL_ERROR, ERROR_CODE_IO_ERROR,
+                     "File system error %d occured while attempting to "
+                     "send a text message via twilio.",
+                     (int)rc);
+    return;
+  }
 }
 
 static void populate_sendgrid_email_req_and_send(
@@ -251,6 +263,13 @@ static void populate_sendgrid_email_req_and_send(
                           (char*)sg_serverclass, (short)strlen(sg_serverclass),
                           (char*)&sg_request, (char*)&sg_rp, sizeof(sg_request),
                           sizeof(sg_rp));
+  if (rc != 0) {
+    reply_with_error(RP_CODE_INTERNAL_ERROR, ERROR_CODE_IO_ERROR,
+                     "File system error %d occured while attempting to "
+                     "send an email via sendgrid.",
+                     (int)rc);
+    return;
+  }
 }
 
 static void get_current_date(char* buffer) {

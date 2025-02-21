@@ -116,7 +116,7 @@ inlprefix +
 + set server linkdepth            4
 + set server maxservers           4
 + set server maxlinks             20
-+ set server numstatic            0
++ set server numstatic            1
 + set server tmf                  on
 + set server debug                off
 + set server in                   [console]
@@ -126,6 +126,7 @@ inlprefix +
 + set server param enable-sms     [#param enable-sms]
 + set server param enable-email   [#param enable-email]
 + add server pay-server
+
 
 + reset server
 + set server cpus                 0:1
@@ -172,7 +173,6 @@ inlprefix +
 + set server param pathmon-name   [#param pathmon-name]
 + add server sg-server
 
-
 + reset server
 + set server cpus                 0:1
 + set server createdelay          10 secs
@@ -194,6 +194,88 @@ inlprefix +
 + set server param base-url       [#param twilio-messaging-base-url]
 + set server param auth           twauth
 + add server twl-server
+
+
++ reset server
++ set server cpus                 0:1
++ set server createdelay          10 secs
++ set server deletedelay          10 mins
++ set server highpin              on
++ set server linkdepth            4
++ set server maxservers           4
++ set server maxlinks             20
++ set server numstatic            0
++ set server tmf                  off
++ set server debug                off
++ set server in                   [console]
++ set server out                  [console]
++ set server program              [client]
++ set server param log            +logcfg
++ set server param diag-log       +logcfg
++ set server param monitor        "api log diag-log auth"
++ set server param api            iprod
++ set server param base-url       [#param kfk-rest-proxy-base-url-v3]
++ set server param auth           kfkauth
++ set server param pathmon-name   [#param pathmon-name]
++ add server kfk-producerapi
+
++ reset server
++ set server cpus                 0:1
++ set server createdelay          10 secs
++ set server deletedelay          10 mins
++ set server highpin              on
++ set server linkdepth            4
++ set server maxservers           4
++ set server maxlinks             20
++ set server numstatic            0
++ set server tmf                  on
++ set server debug                off
++ set server in                   [console]
++ set server out                  [console]
++ set server program              prodsv
++ set server param pathmon-name   [#param pathmon-name]
++ add server kfk-producersvr
+
+
++ reset server
++ set server cpus                 0:1
++ set server createdelay          10 secs
++ set server deletedelay          10 mins
++ set server highpin              on
++ set server linkdepth            4
++ set server maxservers           4
++ set server maxlinks             20
++ set server numstatic            0
++ set server tmf                  off
++ set server debug                off
++ set server in                   [console]
++ set server out                  [console]
++ set server program              [client]
++ set server param log            +logcfg
++ set server param diag-log       +logcfg
++ set server param monitor        "api log diag-log auth"
++ set server param api            apicon
++ set server param base-url       [#param kfk-rest-proxy-base-url-v2]
++ set server param auth           kfkauth
++ set server param pathmon-name   [#param pathmon-name]
++ add server kfk-consumerapi
+
++ reset server
++ set server cpus                 0:1
++ set server createdelay          10 secs
++ set server deletedelay          10 mins
++ set server highpin              on
++ set server linkdepth            4
++ set server maxservers           4
++ set server maxlinks             20
++ set server numstatic            0
++ set server tmf                  on
++ set server debug                off
++ set server in                   [#myterm]
++ set server out                  [#myterm]
++ set server program              ascsv
++ set server param pathmon-name   [#param pathmon-name]
++ add server kfk-consumersvr
 
 + start server *
 

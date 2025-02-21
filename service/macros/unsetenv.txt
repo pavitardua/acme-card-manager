@@ -9,6 +9,6 @@ clear param enable-sms
 clear param enable-email
 clear param sg-base-url
 clear param sns-base-url
-
-
+clear param kfk-rest-proxy-base-url-v2
+clear param kfk-rest-proxy-base-url-v3
 

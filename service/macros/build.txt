@@ -22,7 +22,7 @@ ddl2 / inline, out ddlout /
 + ?dict !
 + ?c acmeh !
 + ?cobol acmecpy !
-+ ?source acmeddl   
++ ?source acmeddl
 + ?noc
 + ?nocobol
 
@@ -80,13 +80,28 @@ ccomp / in payc, out payl / payserv ; &
   #return
 ]
 
+#output Building the Ingest server ....
+
+sink [#purge ingl]
+sink [#purge ingserv]
+
+ccomp / in ingc, out ingl / ingserv ; &
+  runnable, symbols, inspect, extensions, &
+  ssv0 "[#defaults/current/]", ssv1 "$system.system", &
+  ssv2 "$system.zsysdefs"
+
+[#if [ :_completion:completioncode ] <> 0 |then|
+  #output Compilation of INGC completed with warnings or errors.
+  #return
+]
+
 #output Creating database files ....
 
 sink [#purge fupout]
 
 [#if [#fileinfo / existence / acctfile ] = 0 |then|
 
-  fup / in acctfup, out fupout / 
+  fup / in acctfup, out fupout /
 
   [#if [ :_completion:completioncode ] <> 0 |then|
     #output Creation of database file ACCTFILE completed with warnings or errors.
@@ -96,7 +111,7 @@ sink [#purge fupout]
 
 [#if [#fileinfo / existence / cardfile ] = 0 |then|
 
-  fup / in cardfup, out fupout / 
+  fup / in cardfup, out fupout /
 
   [#if [ :_completion:completioncode ] <> 0 |then|
     #output Creation of database file CARDFILE completed with warnings or errors.
@@ -106,7 +121,7 @@ sink [#purge fupout]
 
 [#if [#fileinfo / existence / tranfile ] = 0 |then|
 
-  fup / in tranfup, out fupout / 
+  fup / in tranfup, out fupout /
 
   [#if [ :_completion:completioncode ] <> 0 |then|
     #output Creation of database file TRANFILE completed with warnings or errors.
@@ -115,6 +130,6 @@ sink [#purge fupout]
 ]
 
 #output Build completed successfully.
-#output 
+#output
 
 #unframe
