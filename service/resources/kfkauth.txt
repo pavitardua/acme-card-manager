@@ -1,0 +1,7 @@
+#
+#Your kfk rest proxy APIKEY
+#
+[auth]
+method=auth-token
+Header=Authorization
+Token=
