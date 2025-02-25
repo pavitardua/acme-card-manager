@@ -41,8 +41,7 @@ static void reply_with_error(rp_code_def rp_code, error_code_def error_code,
                              const char* error_format, ...);
 static void reset_database(void);
 static void void_payment(void* request);
-static void populate_kakfka_produce_record_request(const char* json_str,
-                                                   int rq_code);
+static void produce_records_to_kafka(const char* json_str, short rq_code);
 
 /* Static functions. */
 static int activate_transaction(const char* type) {
@@ -220,11 +219,11 @@ static void create_payment(void* request) {
             "  \"headers\": []\n"
             "}",
             rp.transaction.transaction_id, rp.transaction.payment_detail.amount,
-            2, card.card_number, rp.transaction.payment_detail.merchant_name,
+            card.card_number, rp.transaction.payment_detail.merchant_name,
             card.card_detail.name_on_card, card.card_detail.security_code);
 
-    printf("%s\n", json_str);
-    populate_kakfka_produce_record_request(json_str, rq_produce_transactions);
+    /*printf("%s\n", json_str);*/
+    produce_records_to_kafka(json_str, rq_produce_transactions);
 
     if (rq->payment_detail.amount >= card.card_detail.alert_limit) {
       alert_account_rq_def alert_rq;
@@ -264,8 +263,7 @@ static void create_payment(void* request) {
   }
 }
 
-static void populate_kakfka_produce_record_request(const char* json_str,
-                                                   int rq_code) {
+static void produce_records_to_kafka(const char* json_str, short rq_code) {
 
   short rc;
   produce_record_rq_def produce_record_rq;
