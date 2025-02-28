@@ -234,6 +234,7 @@ inlprefix +
 + set server out                  [console]
 + set server program              prodsv
 + set server param pathmon-name   [#param pathmon-name]
++ set server param kfk-producerapi kfk-producerapi
 + add server kfk-producersvr
 
 
@@ -268,13 +269,19 @@ inlprefix +
 + set server linkdepth            4
 + set server maxservers           4
 + set server maxlinks             20
-+ set server numstatic            0
++ set server numstatic            1
 + set server tmf                  on
 + set server debug                off
 + set server in                   [#myterm]
 + set server out                  [#myterm]
-+ set server program              ascsv
++ set server program              consv
 + set server param pathmon-name   [#param pathmon-name]
++ set server param kfk-consumerapi kfk-consumerapi
++ set server param kfk-forward-server pay-server
++ set server param consumer-f-pathmon $MACME
++ set server param consumer-group-name cgdev25
++ set server param consumer-instance-name cidev25
++ set server param consumer-topic-name payments
 + add server kfk-consumersvr
 
 + start server *
