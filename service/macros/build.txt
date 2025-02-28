@@ -43,7 +43,8 @@ sink [#purge acctserv]
 ccomp / in acctc, out acctl / acctserv ; &
   runnable, symbols, inspect, extensions, &
   ssv0 "[#defaults/current/]", ssv1 "$system.system", &
-  ssv2 "$system.zsysdefs"
+  ssv2 "$system.zsysdefs", &
+  xld(-set runnamed on -set saveabend on)
 
 [#if [ :_completion:completioncode ] <> 0 |then|
   #output Compilation of ACCTC completed with warnings or errors.
@@ -58,7 +59,8 @@ sink [#purge cardserv]
 ccomp / in cardc, out cardl / cardserv ; &
   runnable, symbols, inspect, extensions, &
   ssv0 "[#defaults/current/]", ssv1 "$system.system", &
-  ssv2 "$system.zsysdefs"
+  ssv2 "$system.zsysdefs", &
+  xld(-set runnamed on -set saveabend on)
 
 [#if [ :_completion:completioncode ] <> 0 |then|
   #output Compilation of CARDC completed with warnings or errors.
@@ -73,7 +75,8 @@ sink [#purge payserv]
 ccomp / in payc, out payl / payserv ; &
   runnable, symbols, inspect, extensions, &
   ssv0 "[#defaults/current/]", ssv1 "$system.system", &
-  ssv2 "$system.zsysdefs"
+  ssv2 "$system.zsysdefs", &
+  xld(-set runnamed on -set saveabend on)
 
 [#if [ :_completion:completioncode ] <> 0 |then|
   #output Compilation of PAYC completed with warnings or errors.
@@ -88,7 +91,8 @@ sink [#purge ingserv]
 ccomp / in ingc, out ingl / ingserv ; &
   runnable, symbols, inspect, extensions, &
   ssv0 "[#defaults/current/]", ssv1 "$system.system", &
-  ssv2 "$system.zsysdefs"
+  ssv2 "$system.zsysdefs", &
+  xld(-set runnamed on -set saveabend on)
 
 [#if [ :_completion:completioncode ] <> 0 |then|
   #output Compilation of INGC completed with warnings or errors.
