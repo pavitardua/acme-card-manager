@@ -272,8 +272,8 @@ inlprefix +
 + set server numstatic            1
 + set server tmf                  on
 + set server debug                off
-+ set server in                   [#myterm]
-+ set server out                  [#myterm]
++ set server in                   [console]
++ set server out                  [console]
 + set server program              consv
 + set server param pathmon-name   [#param pathmon-name]
 + set server param kfk-consumerapi kfk-consumerapi
